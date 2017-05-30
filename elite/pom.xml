@@ -12,6 +12,7 @@
         <jdk.version>1.8</jdk.version>
         <jee.version>7.0</jee.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jackson.version>2.6.0</jackson.version>
     </properties>
 
     <packaging>jar</packaging>
@@ -31,6 +32,11 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
     </dependencies>
 
