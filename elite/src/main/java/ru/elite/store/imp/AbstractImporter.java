@@ -57,8 +57,8 @@ public abstract class AbstractImporter implements Importer {
                 StarSystemData systemData = getSystem();
                 StarSystem system = impSystem(galaxyService, systemData);
                 if (system != null) {
-                    Collection<StationData> stations = systemData.getStations();
-                    impStations(galaxyService, system, stations);
+                    impStations(galaxyService, system, systemData.getStations());
+                    impFactions(galaxyService, system, systemData.getFactions());
                 } else {
                     LOG.warn("System {} not found", systemData.getName());
                 }
@@ -89,6 +89,9 @@ public abstract class AbstractImporter implements Importer {
     }
 
     protected void updateSystem(GalaxyService galaxyService, StarSystem system, StarSystemData data){
+        if (data.getName() != null){
+            system.setName(data.getName());
+        }
         if (!Double.isNaN(data.getX()) && !Double.isNaN(data.getY()) && !Double.isNaN(data.getZ()) &&
                 (data.getX() != system.getX() || data.getY() != system.getY() || data.getZ() != system.getZ())){
             system.setPosition(data.getX(), data.getY(), data.getZ());
@@ -109,6 +112,49 @@ public abstract class AbstractImporter implements Importer {
         if (data.getIncome() != null && data.getIncome() > 0) {
             system.setIncome(data.getIncome());
         }
+        if (data.getModifiedTime() != null){
+            system.setModifiedTime(data.getModifiedTime());
+        }
+    }
+
+    protected void impFactions(GalaxyService galaxyService, StarSystem system, Collection<MinorFactionData> factions){
+        if (factions == null) return;
+        Set<Long> factionsList = new HashSet<>();
+        factionsList.addAll(galaxyService.getAllMinorFactionsIds(system));
+        for (MinorFactionData f : factions) {
+            MinorFaction faction = impFaction(galaxyService, f);
+            if (faction != null){
+                factionsList.remove(faction.getId());
+                impFactionState(galaxyService, system, faction, f);
+            } else {
+                LOG.warn("Faction {} not found", f.getName());
+            }
+        }
+        for (Long f : factionsList) {
+            LOG.debug("{} - is old faction in system {}, remove", f, system.getName());
+            galaxyService.removeFactionFromSystem(system.getId(), f);
+        }
+    }
+
+    protected MinorFactionState impFactionState(GalaxyService galaxyService, StarSystem system, MinorFaction faction, MinorFactionData data){
+        Optional<MinorFactionState> factionState = galaxyService.findFactionState(system.getId(), faction.getId());
+        if (!factionState.isPresent()){
+            LOG.debug("{} - is new faction in system {}, adding", faction.getName(), system.getName());
+            return galaxyService.addFactionToSystem(system, faction, data.getState(), data.getInfluence());
+        } else {
+            MinorFactionState fs = factionState.get();
+            updateFactionState(fs, data);
+            return fs;
+        }
+    }
+
+    protected void updateFactionState(MinorFactionState state, MinorFactionData data){
+        if (data.getState() != null){
+            state.setState(data.getState());
+        }
+        if (!Float.isNaN(data.getInfluence())){
+            state.setInfluence(data.getInfluence());
+        }
     }
 
     protected MinorFaction impFaction(GalaxyService galaxyService, MinorFactionData data){
@@ -122,6 +168,15 @@ public abstract class AbstractImporter implements Importer {
     }
 
     protected void updateFaction(GalaxyService galaxyService, MinorFaction faction, MinorFactionData data){
+        if (data.getName() != null){
+            faction.setName(data.getName());
+        }
+        if (data.getGovernment() != null){
+            faction.setGovernment(data.getGovernment());
+        }
+        if (data.getFaction() != null){
+            faction.setFaction(data.getFaction());
+        }
         if (data.getHomeSystemName() != null){
             Optional<StarSystem> system = galaxyService.findStarSystemByName(data.getHomeSystemName());
             if (system.isPresent()){
@@ -175,6 +230,9 @@ public abstract class AbstractImporter implements Importer {
     }
 
     protected void updateStation(GalaxyService galaxyService, Station station, StationData data) {
+        if (data.getName() != null){
+            station.setName(data.getName());
+        }
         if (!Double.isNaN(data.getDistance())){
             station.setDistance(data.getDistance());
         }

@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.elite.core.*;
 import ru.elite.entity.MinorFaction;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface StarSystemData {
@@ -32,4 +33,11 @@ public interface StarSystemData {
 
     @Nullable
     Collection<StationData> getStations();
+
+    @Nullable
+    Collection<MinorFactionData> getFactions();
+
+    @Nullable
+    LocalDateTime getModifiedTime();
+
 }

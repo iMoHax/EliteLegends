@@ -19,8 +19,7 @@ public interface MinorFactionData {
     @Nullable
     STATE_TYPE getState();
 
-    @Nullable
-    Float getInfluence();
+    float getInfluence();
 
     @Nullable
     String getHomeSystemName();

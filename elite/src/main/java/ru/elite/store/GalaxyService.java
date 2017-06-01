@@ -15,6 +15,7 @@ public interface GalaxyService {
     Galaxy getGalaxy();
 
     Collection<Long> getAllStationIds(StarSystem system);
+    Collection<Long> getAllMinorFactionsIds(StarSystem system);
 
     Group createGroup(String name, GROUP_TYPE type);
     Optional<Group> findGroupById(long id);

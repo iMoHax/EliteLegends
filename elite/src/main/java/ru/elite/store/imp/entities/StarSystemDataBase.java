@@ -5,6 +5,7 @@ import ru.elite.core.POWER;
 import ru.elite.core.POWER_STATE;
 import ru.elite.core.SECURITY_LEVEL;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public abstract class StarSystemDataBase implements StarSystemData {
@@ -67,6 +68,18 @@ public abstract class StarSystemDataBase implements StarSystemData {
     @Nullable
     @Override
     public Collection<StationData> getStations() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Collection<MinorFactionData> getFactions() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public LocalDateTime getModifiedTime() {
         return null;
     }
 }

@@ -16,10 +16,9 @@ public abstract class MinorFactionDataBase implements MinorFactionData {
         return null;
     }
 
-    @Nullable
     @Override
-    public Float getInfluence() {
-        return null;
+    public float getInfluence() {
+        return Float.NaN;
     }
 
     @Nullable
