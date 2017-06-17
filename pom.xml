@@ -8,8 +8,8 @@
     <artifactId>EliteLegends</artifactId>
     <version>0.1</version>
     <modules>
-        <module>utils</module>
         <module>elite</module>
+        <module>app</module>
     </modules>
 
     <properties>
