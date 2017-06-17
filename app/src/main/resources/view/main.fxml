@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.web.HTMLEditor?>
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.elite.legends.controllers.MainController"
+            fx:id="mainPane"
+        >
+    <left>
+        <ListView fx:id="questsList" maxWidth="100"/>
+    </left>
+    <center>
+        <HTMLEditor fx:id="htmlText" prefHeight="200"/>
+    </center>
+    <bottom>
+        <ListView fx:id="actionsList" maxHeight="100" />
+    </bottom>
+
+</BorderPane>

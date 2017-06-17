@@ -98,11 +98,13 @@
                     <artifactId>javafx-maven-plugin</artifactId>
                     <version>8.4.0</version>
                     <configuration>
-                        <mainClass>ru.trader.Main</mainClass>
+                        <vendor>MoHax</vendor>
+                        <mainClass>ru.elite.legends.Main</mainClass>
                         <jvmArgs>
                             <jvmArg>-Xmx1G</jvmArg>
                         </jvmArgs>
-                        <appName>Trader</appName>
+                        <appName>Elite Legend</appName>
+                        <additionalAppResources>${project.build.directory}/distrib</additionalAppResources>
                     </configuration>
                 </plugin>
             </plugins>
