@@ -8,12 +8,15 @@ public class Stage {
     private final String id;
 
     private String text;
-    private Collection<Action> actions;
+    private final Collection<Action> actions;
+    private final Collection<EventHandler> events;
     private QUEST_STATUS status;
 
     public Stage(String id) {
         this.id = id;
         actions = new ArrayList<>();
+        events = new ArrayList<>();
+        status = QUEST_STATUS.NONE;
     }
 
     public String getId() {
@@ -38,6 +41,18 @@ public class Stage {
 
     public void removeAction(Action action) {
         actions.remove(action);
+    }
+
+    public Collection<EventHandler> getEvents() {
+        return events;
+    }
+
+    public void addEvent(EventHandler event) {
+        events.add(event);
+    }
+
+    public void removeEvent(EventHandler event) {
+        events.remove(event);
     }
 
     public QUEST_STATUS getStatus() {

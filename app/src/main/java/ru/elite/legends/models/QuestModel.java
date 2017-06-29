@@ -29,6 +29,10 @@ public class QuestModel {
         return quest.getStage();
     }
 
+    public boolean equalsQuest(Quest otherQuest) {
+        return this.quest.equals(otherQuest);
+    }
+
     @Override
     public String toString() {
         return quest.getCaption();

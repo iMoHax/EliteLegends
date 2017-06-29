@@ -54,4 +54,8 @@ public class StageModel {
     public ObservableList<ActionModel> getActions() {
         return actions;
     }
+
+    public boolean equalsStage(Stage otherStage) {
+        return this.stage.equals(otherStage);
+    }
 }

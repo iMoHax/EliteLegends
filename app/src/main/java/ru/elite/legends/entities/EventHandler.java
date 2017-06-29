@@ -1,24 +1,24 @@
 package ru.elite.legends.entities;
 
-public abstract class Action {
+public abstract class EventHandler {
     private final String id;
-    private final String description;
+    private final EVENT_TYPE type;
     private boolean active;
 
-    public Action(String id, String description) {
+    protected EventHandler(String id, EVENT_TYPE type) {
         this.id = id;
-        this.description = description;
+        this.type = type;
         this.active = true;
     }
 
-    public abstract void complete();
+    public abstract void handle();
 
     public String getId() {
         return id;
     }
 
-    public String getDescription() {
-        return description;
+    public EVENT_TYPE getType() {
+        return type;
     }
 
     public boolean isActive() {
@@ -31,9 +31,9 @@ public abstract class Action {
 
     @Override
     public String toString() {
-        return "Action{" +
+        return "EventHandler{" +
                 "id='" + id + '\'' +
-                ", description='" + description + '\'' +
+                ", type=" + type +
                 ", active=" + active +
                 '}';
     }

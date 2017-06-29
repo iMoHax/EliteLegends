@@ -2,9 +2,7 @@ package ru.elite.legends.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.elite.legends.entities.QUEST_STATUS;
-import ru.elite.legends.entities.Quest;
-import ru.elite.legends.entities.Stage;
+import ru.elite.legends.entities.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,12 +10,10 @@ import java.util.Optional;
 
 public class QuestsManager {
     private final static Logger LOG = LoggerFactory.getLogger(QuestsManager.class);
-    private final Collection<Quest> quests;
-    private final Collection<InvalidateListener> listeners;
+    private final Collection<Quest> quests = new ArrayList<>();
+    private final Collection<InvalidateListener> listeners = new ArrayList<>();
 
     public QuestsManager() {
-        quests = new ArrayList<>();
-        listeners = new ArrayList<>();
     }
 
     public Collection<Quest> getQuests() {
@@ -51,39 +47,101 @@ public class QuestsManager {
         return stage;
     }
 
+    private void changeStatus(Quest quest, QUEST_STATUS status){
+        QUEST_STATUS old = quest.getStatus();
+        if (old == status) return;
+        LOG.debug("Change status of quest {}, old = {}, new ={}", quest, old, status);
+        quest.setStatus(status);
+        fireChangeStatus(quest, old, status);
+    }
+
+    private void changeStatus(Stage stage, QUEST_STATUS status){
+        QUEST_STATUS old = stage.getStatus();
+        if (old == status) return;
+        LOG.debug("Change status of stage {}, old = {}, new ={}", stage, old, status);
+        stage.setStatus(status);
+        fireChangeStatus(stage, old, status);
+    }
+
+    private void changeStatus(Stage stage, Action action, boolean active){
+        boolean old = action.isActive();
+        if (old == active) return;
+        LOG.debug("Change status of action {}, old = {}, new ={}, stage = {}", action, old, active, stage);
+        action.setActive(active);
+        fireChangeStatus(stage, action, old, active);
+    }
+
+    private void changeStatus(Stage stage, EventHandler event, boolean active){
+        boolean old = event.isActive();
+        if (old == active) return;
+        LOG.debug("Change status of event {}, old = {}, new ={}, stage = {}", event, old, active, stage);
+        event.setActive(active);
+        fireChangeStatus(stage, event, old, active);
+    }
+
+    private void changeStage(Quest quest, Stage stage){
+        Stage old = quest.getStage();
+        if (old == stage) return;
+        LOG.debug("Change stage of quest {}, old = {}, new ={}", quest, old, stage);
+        quest.setStage(stage);
+        fireChangeStage(quest, old, stage);
+    }
+
+
     public void activate(String questId){
-        getQuest(questId).ifPresent(q -> q.setStatus(QUEST_STATUS.ACTIVE));
-        invalidate();
+        getQuest(questId).ifPresent(q -> changeStatus(q, QUEST_STATUS.ACTIVE));
     }
 
     public void complete(String questId){
-        getQuest(questId).ifPresent(q -> q.setStatus(QUEST_STATUS.COMPLETE));
-        invalidate();
+        getQuest(questId).ifPresent(q -> changeStatus(q, QUEST_STATUS.COMPLETE));
     }
 
     public void fail(String questId){
-        getQuest(questId).ifPresent(q -> q.setStatus(QUEST_STATUS.FAILED));
-        invalidate();
+        getQuest(questId).ifPresent(q -> changeStatus(q, QUEST_STATUS.FAILED));
+    }
+
+    public void goTo(String questId, String stageId, boolean complete){
+        getQuest(questId).ifPresent(q -> getStage(q, stageId).ifPresent(s -> {
+            changeStatus(q.getStage(), complete ? QUEST_STATUS.COMPLETE : QUEST_STATUS.FAILED);
+            changeStatus(s, QUEST_STATUS.ACTIVE);
+            changeStage(q, s);
+        }));
     }
 
     public void activate(String questId, String stageId){
-        getQuest(questId).ifPresent(q -> getStage(q, stageId).ifPresent(q::setStage));
-        invalidate();
+        getQuest(questId).ifPresent(q -> getStage(q, stageId).ifPresent(s -> changeStatus(s, QUEST_STATUS.ACTIVE)));
     }
 
     public void complete(String questId, String stageId){
-        getQuest(questId).ifPresent(q -> getStage(q, stageId).ifPresent(s -> s.setStatus(QUEST_STATUS.COMPLETE)));
-        invalidate();
+        getQuest(questId).ifPresent(q -> getStage(q, stageId).ifPresent(s -> changeStatus(s, QUEST_STATUS.COMPLETE)));
     }
 
     public void fail(String questId, String stageId){
-        getQuest(questId).ifPresent(q -> getStage(q, stageId).ifPresent(s -> s.setStatus(QUEST_STATUS.FAILED)));
-        invalidate();
+        getQuest(questId).ifPresent(q -> getStage(q, stageId).ifPresent(s -> changeStatus(s, QUEST_STATUS.FAILED)));
     }
 
 
-    private void invalidate(){
-        listeners.forEach(InvalidateListener::invalidate);
+    /*********  LISTENER *************/
+
+    private void fireChangeStatus(Quest quest, QUEST_STATUS oldStatus, QUEST_STATUS newStatus){
+        listeners.forEach(l -> l.change(quest, oldStatus, newStatus));
+    }
+
+
+    private void fireChangeStatus(Stage stage, QUEST_STATUS oldStatus, QUEST_STATUS newStatus){
+        listeners.forEach(l -> l.change(stage, oldStatus, newStatus));
+    }
+
+    private void fireChangeStatus(Stage stage, Action action, boolean oldActive, boolean newActive){
+        listeners.forEach(l -> l.change(stage, action, oldActive, newActive));
+    }
+
+    private void fireChangeStatus(Stage stage, EventHandler eventHandler, boolean oldActive, boolean newActive){
+        listeners.forEach(l -> l.change(stage, eventHandler, oldActive, newActive));
+    }
+
+    private void fireChangeStage(Quest quest, Stage oldStage, Stage newStage){
+        listeners.forEach(l -> l.change(quest, oldStage, newStage));
     }
 
     public void addListener(InvalidateListener listener){
@@ -95,6 +153,12 @@ public class QuestsManager {
     }
 
     public interface InvalidateListener {
-        void invalidate();
+
+        void change(Quest quest, QUEST_STATUS oldStatus, QUEST_STATUS newStatus);
+        void change(Stage stage, QUEST_STATUS oldStatus, QUEST_STATUS newStatus);
+        void change(Stage stage, Action action, boolean oldActive, boolean newActive);
+        void change(Stage stage, EventHandler event, boolean oldActive, boolean newActive);
+        void change(Quest quest, Stage oldStage, Stage newStage);
+
     }
 }

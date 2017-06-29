@@ -18,6 +18,7 @@ public class Quest {
     public Quest(String id) {
         this.id = id;
         stages = new ArrayList<>();
+        status = QUEST_STATUS.NONE;
     }
 
     public String getId() {
