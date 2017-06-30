@@ -10,14 +10,14 @@ import javafx.scene.web.WebView;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.elite.legends.QuestsLoader;
+import ru.elite.legends.Main;
 import ru.elite.legends.entities.*;
 import ru.elite.legends.models.ActionModel;
 import ru.elite.legends.models.QuestModel;
 import ru.elite.legends.models.StageModel;
 import ru.elite.legends.view.ViewController;
+import ru.elite.legends.view.ViewUtils;
 
-import java.util.Observable;
 
 public class MainController implements ViewController {
     private final static Logger LOG = LoggerFactory.getLogger(MainController.class);
@@ -72,7 +72,7 @@ public class MainController implements ViewController {
     @Override
     public void reinitialise() {
         questsList.getItems().clear();
-        QuestsManager manager = QuestsLoader.load();
+        QuestsManager manager = Main.questsManager;
         manager.getQuests().stream().forEach(q -> questsList.getItems().add(new QuestModel(q)));
         manager.addListener(questsChangeListener);
     }
@@ -114,7 +114,7 @@ public class MainController implements ViewController {
         public void change(Quest quest, QUEST_STATUS oldStatus, QUEST_STATUS newStatus) {
             QuestModel model = getModel(quest);
             if (model != null){
-                model.refresh();
+                ViewUtils.doFX(model::refresh);
             }
         }
 
@@ -122,7 +122,7 @@ public class MainController implements ViewController {
         public void change(Stage stage, QUEST_STATUS oldStatus, QUEST_STATUS newStatus) {
             StageModel model = getModel(stage);
             if (model != null){
-                model.refresh();
+                ViewUtils.doFX(model::refresh);
             }
         }
 
@@ -130,7 +130,7 @@ public class MainController implements ViewController {
         public void change(Stage stage, Action action, boolean oldActive, boolean newActive) {
             StageModel model = getModel(stage);
             if (model != null){
-                model.refresh();
+                ViewUtils.doFX(model::refresh);
             }
         }
 
@@ -142,8 +142,10 @@ public class MainController implements ViewController {
         public void change(Quest quest, Stage oldStage, Stage newStage) {
             QuestModel model = getModel(quest);
             if (model != null && model == getSelectedQuest()){
-                model.refresh();
-                showQuest(model);
+                ViewUtils.doFX(() -> {
+                    model.refresh();
+                    showQuest(model);
+                });
             }
         }
     };

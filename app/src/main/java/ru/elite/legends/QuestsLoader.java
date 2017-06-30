@@ -65,7 +65,7 @@ public class QuestsLoader {
         EventHandler q1s1e1 = new EventHandler("e1", EVENT_TYPE.JUMP) {
             @Override
             public void handle() {
-                manager.activate("q1","s3");
+                manager.goTo("q1","s3", true);
             }
         };
 
@@ -80,6 +80,8 @@ public class QuestsLoader {
         q1s2.addAction(q1s2a1);
         q1s2.addAction(q1s2a2);
         q1s2.addAction(q1s2a3);
+        Stage q1s3 = new Stage("s3");
+        q1s3.setText("QUEST 1 Stage 3 after jump");
         Stage q2s1 = new Stage("s1");
         q2s1.setText("QUEST 2 Stage 1");
         q2s1.addAction(q2s1a1);
@@ -97,6 +99,7 @@ public class QuestsLoader {
         q1.setDescription("Test quest");
         q1.addStage(q1s1);
         q1.addStage(q1s2);
+        q1.addStage(q1s3);
         q1.setStage(q1s1);
         q1.setStatus(QUEST_STATUS.ACTIVE);
         q1s1.setStatus(QUEST_STATUS.ACTIVE);

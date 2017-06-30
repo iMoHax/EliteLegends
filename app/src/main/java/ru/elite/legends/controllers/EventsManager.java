@@ -13,14 +13,14 @@ public class EventsManager {
     private final List<ReentrantLock> locks = new ArrayList<>(EVENT_TYPE.values().length);
 
     public EventsManager() {
-        for (int i = 0; i < eventHandlers.size(); i++) {
-            eventHandlers.set(i, new ArrayList<>(50));
-            locks.set(i, new ReentrantLock());
+        for (int i = 0; i < EVENT_TYPE.values().length; i++) {
+            eventHandlers.add(new ArrayList<>(50));
+            locks.add(new ReentrantLock());
         }
     }
 
     private int getIndex(EVENT_TYPE eventType){
-        return  eventType.ordinal() - 1;
+        return  eventType.ordinal();
     }
 
     private void add(EventHandler eventHandler){
@@ -49,7 +49,7 @@ public class EventsManager {
         int eventIndex = getIndex(type);
         locks.get(eventIndex).lock();
         try {
-            return (EventHandler[]) eventHandlers.get(eventIndex).toArray();
+            return eventHandlers.get(eventIndex).toArray(new EventHandler[0]);
         } finally {
             locks.get(eventIndex).unlock();
         }

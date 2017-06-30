@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.elite.legends.controllers.EventsManager;
+import ru.elite.legends.controllers.QuestsManager;
 import ru.elite.legends.locale.Localization;
 import ru.elite.legends.view.ViewManager;
 
@@ -20,12 +22,16 @@ import java.util.Locale;
 public class Main extends Application {
     private final static Logger LOG = LoggerFactory.getLogger(Main.class);
     private static Stage primaryStage;
-    private static ViewManager viewManager;
+    public static ViewManager viewManager;
+    public static EventsManager eventsManager;
+    public static QuestsManager questsManager;
+    private static EDLogWatcher logWatcher;
 
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         Main.primaryStage = primaryStage;
+        initServices();
         loadMainScene();
         loadResources();
         primaryStage.show();
@@ -35,6 +41,7 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
+        logWatcher.shutdown();
     }
 
     public static void main(String[] args) {
@@ -84,6 +91,16 @@ public class Main extends Application {
         if (file.exists()) return file.toURI().toURL();
         return Main.class.getResource("/view/" + filename);
     }
+
+    private void initServices() {
+        eventsManager = new EventsManager();
+        questsManager = QuestsLoader.load();
+        eventsManager.register(questsManager);
+        logWatcher = new EDLogWatcher(eventsManager);
+        logWatcher.run();
+    }
+
+
 
     public static void copyToClipboard(String string){
         final Clipboard clipboard = Clipboard.getSystemClipboard();

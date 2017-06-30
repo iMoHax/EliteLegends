@@ -56,6 +56,6 @@ public class StageModel {
     }
 
     public boolean equalsStage(Stage otherStage) {
-        return this.stage.equals(otherStage);
+        return this.stage != null && this.stage.equals(otherStage);
     }
 }

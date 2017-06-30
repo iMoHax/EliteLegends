@@ -23,10 +23,12 @@ public class EDJournalReader extends LogReader {
     @Override
     protected void outLine(String line) {
         super.outLine(line);
+        if (line.trim().isEmpty()) return;
         try {
             JsonNode eventNode = mapper.readTree(line);
             if (!eventNode.has(EVENT_ATTR)){
                 LOG.warn("Attribute {} not found, skip", EVENT_ATTR);
+                LOG.debug("Line: {}", line);
                 return;
             }
             String event = eventNode.get(EVENT_ATTR).asText();

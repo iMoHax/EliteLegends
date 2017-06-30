@@ -118,6 +118,7 @@ public class LogWatcher {
 
                     boolean valid = key.reset();
                     if (!valid) {
+                        LOG.error("Watch key is invalid");
                         break;
                     }
                 }
