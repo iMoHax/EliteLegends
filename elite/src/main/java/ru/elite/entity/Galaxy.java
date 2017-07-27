@@ -1,31 +1,36 @@
 package ru.elite.entity;
 
+import ru.elite.core.FACTION;
+import ru.elite.core.GOVERNMENT;
+import ru.elite.core.GROUP_TYPE;
+
 import java.util.Collection;
 
 public interface Galaxy {
 
-    Collection<StarSystem> get();
-    StarSystem add(StarSystem starSystem);
+    Collection<StarSystem> getStarSystems();
+    StarSystem addStarSystem(String name, double x, double y, double z);
     boolean remove(StarSystem starSystem);
-    void addAll(Collection<StarSystem> systems);
     void clearStarSystems();
 
     Collection<Group> getGroups();
-    Group add(Group group);
+    Group addGroup(String name, GROUP_TYPE type);
     boolean remove(Group group);
-    void addGroups(Collection<Group> groups);
     void clearGroups();
 
     Collection<Item> getItems();
-    Item add(Item item);
+    Item addItem(String name, Group group);
     boolean remove(Item item);
-    void addItems(Collection<Item> items);
     void clearItems();
 
     Collection<MinorFaction> getFactions();
-    MinorFaction add(MinorFaction faction);
+    MinorFaction addFaction(String name, FACTION faction, GOVERNMENT government);
     boolean remove(MinorFaction faction);
-    void addFactions(MinorFaction factions);
     void clearFactions();
+
+    Collection<Commander> getCmdrs();
+    Commander addCmdr(String name);
+    boolean remove(Commander cmdr);
+    void clearCmdrs();
 
 }

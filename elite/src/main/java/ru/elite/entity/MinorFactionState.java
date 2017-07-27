@@ -7,9 +7,9 @@ import java.util.stream.Stream;
 
 public interface MinorFactionState {
 
-    long getId();
-
     StarSystem getStarSystem();
+    void removeStarSystem();
+
     MinorFaction getFaction();
 
     float getInfluence();

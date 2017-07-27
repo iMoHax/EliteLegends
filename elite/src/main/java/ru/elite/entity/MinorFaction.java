@@ -4,7 +4,8 @@ import ru.elite.core.FACTION;
 import ru.elite.core.GOVERNMENT;
 
 public interface MinorFaction {
-    long getId();
+    Long getEID();
+    void setEID(Long eid);
 
     String getName();
     void setName(String name);

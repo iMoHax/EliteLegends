@@ -9,6 +9,7 @@ import ru.elite.entity.*;
 import ru.elite.store.GalaxyService;
 import ru.elite.store.imp.entities.*;
 
+import javax.persistence.EntityTransaction;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -50,7 +51,7 @@ public abstract class AbstractImporter implements Importer {
     public void imp(GalaxyService galaxyService) throws IOException {
         canceled = false;
         before();
-        galaxyService.startTransaction();
+        EntityTransaction transaction = galaxyService.startTransaction();
         try {
             while (next()) {
                 if (canceled) break;
@@ -66,7 +67,7 @@ public abstract class AbstractImporter implements Importer {
         } catch (Exception ex){
             LOG.error("Error on import:", ex);
         } finally {
-            galaxyService.commit();
+            transaction.commit();
             after();
         }
     }
@@ -77,7 +78,7 @@ public abstract class AbstractImporter implements Importer {
         if (system == null){
             if (flags.contains(IMPORT_FLAG.ADD_STARSYSTEMS)){
                 LOG.debug("{} - is new system, adding", data.getName());
-                system = galaxyService.createStarSystem(data.getName(), data.getX(), data.getY(), data.getZ());
+                system = galaxyService.getGalaxy().addStarSystem(data.getName(), data.getX(), data.getY(), data.getZ());
             } else {
                 return null;
             }
@@ -89,6 +90,9 @@ public abstract class AbstractImporter implements Importer {
     }
 
     protected void updateSystem(GalaxyService galaxyService, StarSystem system, StarSystemData data){
+        if (data.getId() != null){
+            system.setEID(data.getId());
+        }
         if (data.getName() != null){
             system.setName(data.getName());
         }
@@ -119,28 +123,28 @@ public abstract class AbstractImporter implements Importer {
 
     protected void impFactions(GalaxyService galaxyService, StarSystem system, Collection<MinorFactionData> factions){
         if (factions == null) return;
-        Set<Long> factionsList = new HashSet<>();
-        factionsList.addAll(galaxyService.getAllMinorFactionsIds(system));
+        Set<String> factionsList = new HashSet<>();
+        factionsList.addAll(galaxyService.getAllMinorFactionsNames(system));
         for (MinorFactionData f : factions) {
             MinorFaction faction = impFaction(galaxyService, f);
             if (faction != null){
-                factionsList.remove(faction.getId());
+                factionsList.remove(faction.getName());
                 impFactionState(galaxyService, system, faction, f);
             } else {
                 LOG.warn("Faction {} not found", f.getName());
             }
         }
-        for (Long f : factionsList) {
+        for (String f : factionsList) {
             LOG.debug("{} - is old faction in system {}, remove", f, system.getName());
-            galaxyService.removeFactionFromSystem(system.getId(), f);
+            galaxyService.removeFactionFromSystemByName(system, f);
         }
     }
 
     protected MinorFactionState impFactionState(GalaxyService galaxyService, StarSystem system, MinorFaction faction, MinorFactionData data){
-        Optional<MinorFactionState> factionState = galaxyService.findFactionState(system.getId(), faction.getId());
+        Optional<MinorFactionState> factionState = galaxyService.findFactionState(system, faction);
         if (!factionState.isPresent()){
             LOG.debug("{} - is new faction in system {}, adding", faction.getName(), system.getName());
-            return galaxyService.addFactionToSystem(system, faction, data.getState(), data.getInfluence());
+            return system.addFaction(faction, data.getState(), data.getInfluence());
         } else {
             MinorFactionState fs = factionState.get();
             updateFactionState(fs, data);
@@ -161,13 +165,16 @@ public abstract class AbstractImporter implements Importer {
         MinorFaction faction = findFaction(galaxyService, data.getId(), data.getName());
         if (faction == null){
             LOG.debug("{} - is new faction, adding", data.getName());
-            faction = galaxyService.addFaction(data.getName(), data.getFaction(), data.getGovernment());
+            faction = galaxyService.getGalaxy().addFaction(data.getName(), data.getFaction(), data.getGovernment());
         }
         updateFaction(galaxyService, faction, data);
         return faction;
     }
 
     protected void updateFaction(GalaxyService galaxyService, MinorFaction faction, MinorFactionData data){
+        if (data.getId() != null){
+            faction.setEID(data.getId());
+        }
         if (data.getName() != null){
             faction.setName(data.getName());
         }
@@ -191,23 +198,23 @@ public abstract class AbstractImporter implements Importer {
 
     protected void impStations(GalaxyService galaxyService, StarSystem system, Collection<StationData> stations){
         if (stations == null) return;
-        Set<Long> stationsList = new HashSet<>();
+        Set<String> stationsList = new HashSet<>();
         if (flags.contains(IMPORT_FLAG.REMOVE_STATIONS)){
-            stationsList.addAll(galaxyService.getAllStationIds(system));
+            stationsList.addAll(galaxyService.getAllStationNames(system));
         }
         for (StationData s : stations) {
             Station station = impStation(galaxyService, system, s);
             if (station != null){
-                stationsList.remove(station.getId());
+                stationsList.remove(station.getName());
                 impItems(galaxyService, station, s.getCommodities(), s.getModules(), s.getShips());
             } else {
                 LOG.warn("Station {} not found", s.getName());
             }
         }
         if (flags.contains(IMPORT_FLAG.REMOVE_STATIONS)){
-            for (Long s : stationsList) {
+            for (String s : stationsList) {
                 LOG.debug("{} - is old station, remove", s);
-                galaxyService.removeStation(s);
+                galaxyService.removeStationByName(system, s);
             }
         }
     }
@@ -218,7 +225,7 @@ public abstract class AbstractImporter implements Importer {
         if (station == null){
             if (flags.contains(IMPORT_FLAG.ADD_STATIONS)){
                 LOG.debug("{} - is new station, adding", data.getName());
-                station = galaxyService.addStationToSystem(system, data.getName(), data.getType(), data.getDistance());
+                station = system.addStation(data.getName(), data.getType(), data.getDistance());
             } else {
                 return null;
             }
@@ -230,6 +237,9 @@ public abstract class AbstractImporter implements Importer {
     }
 
     protected void updateStation(GalaxyService galaxyService, Station station, StationData data) {
+        if (data.getId() != null){
+            station.setEID(data.getId());
+        }
         if (data.getName() != null){
             station.setName(data.getName());
         }
@@ -253,8 +263,8 @@ public abstract class AbstractImporter implements Importer {
         if (importedServices != null){
             Collection<SERVICE_TYPE> services = new ArrayList<>(station.getServices());
             services.removeAll(importedServices);
-            services.forEach(station::remove);
-            importedServices.forEach(station::add);
+            services.forEach(station::removeService);
+            importedServices.forEach(station::addService);
         }
         if (data.getModifiedTime() != null){
             station.setModifiedTime(data.getModifiedTime());
@@ -266,9 +276,9 @@ public abstract class AbstractImporter implements Importer {
         Set<Item> itemsList = new HashSet<>();
         if (flags.contains(IMPORT_FLAG.REMOVE_COMMODITY) || flags.contains(IMPORT_FLAG.REMOVE_MODULE) || flags.contains(IMPORT_FLAG.REMOVE_SHIP)){
             Predicate<Offer> isCanRemove = o ->
-                           ships != null && o.getItem().getGroup().isShip() && flags.contains(IMPORT_FLAG.REMOVE_SHIP) ||
-                           modules != null && o.getItem().getGroup().isOutfit() && flags.contains(IMPORT_FLAG.REMOVE_MODULE) ||
-                           commodities != null && o.getItem().getGroup().isMarket() && flags.contains(IMPORT_FLAG.REMOVE_COMMODITY);
+                           ships != null && o.getItem().getGroup().getType().isShip() && flags.contains(IMPORT_FLAG.REMOVE_SHIP) ||
+                           modules != null && o.getItem().getGroup().getType().isOutfit() && flags.contains(IMPORT_FLAG.REMOVE_MODULE) ||
+                           commodities != null && o.getItem().getGroup().getType().isMarket() && flags.contains(IMPORT_FLAG.REMOVE_COMMODITY);
             station.get(OFFER_TYPE.SELL).filter(isCanRemove).map(Offer::getItem).forEach(itemsList::add);
             station.get(OFFER_TYPE.BUY).filter(isCanRemove).map(Offer::getItem).forEach(itemsList::add);
         }
@@ -306,8 +316,7 @@ public abstract class AbstractImporter implements Importer {
         if (flags.contains(IMPORT_FLAG.REMOVE_COMMODITY) || flags.contains(IMPORT_FLAG.REMOVE_MODULE) || flags.contains(IMPORT_FLAG.REMOVE_SHIP)){
             for (Item i : itemsList) {
                 LOG.debug("Remove old offers of {}", i);
-                galaxyService.removeOfferFromStation(station.getId(), OFFER_TYPE.SELL, i.getId());
-                galaxyService.removeOfferFromStation(station.getId(), OFFER_TYPE.BUY, i.getId());
+                galaxyService.removeOffersFromStation(station, i);
             }
         }
     }
@@ -318,21 +327,24 @@ public abstract class AbstractImporter implements Importer {
         if (item == null){
             if (flags.contains(IMPORT_FLAG.ADD_COMMODITY)){
                 LOG.debug("{} - is new commodity, adding", data.getName());
-                Group group = findGroup(galaxyService, data.getGroupId(), data.getGroupName());
+                Group group = findGroup(galaxyService, data.getGroupName());
                 if (group != null) {
-                    item = galaxyService.addItem(data.getName(), group);
+                    item = galaxyService.getGalaxy().addItem(data.getName(), group);
                 } else {
                     LOG.warn("Not found group, id = {}, name = {} skip item", data.getGroupId(), data.getGroupName());
                 }
             }
         }
         if (item != null && flags.contains(IMPORT_FLAG.ITEMS)){
-            updateOffers(galaxyService, station, item, data);
+            updateOffers(station, item, data);
         }
         return item;
     }
 
-    protected void updateOffers(GalaxyService galaxyService, Station station, Item item, ItemData data){
+    protected void updateOffers(Station station, Item item, ItemData data){
+        if (data.getId() != null){
+            item.setEID(data.getId());
+        }
         Optional<Offer> sellOffer = station.getSell(item);
         if (data.getBuyOfferPrice() > 0){
             if (sellOffer.isPresent()){
@@ -340,10 +352,10 @@ public abstract class AbstractImporter implements Importer {
                 o.setPrice(data.getSellOfferPrice());
                 o.setCount(data.getSupply());
             } else {
-                galaxyService.addOfferToStation(station, OFFER_TYPE.SELL, item, data.getBuyOfferPrice(), data.getSupply());
+                station.addOffer(item, OFFER_TYPE.SELL, data.getBuyOfferPrice(), data.getSupply());
             }
         } else {
-            if (sellOffer.isPresent()) station.remove(sellOffer.get());
+            if (sellOffer.isPresent()) station.removeOffer(sellOffer.get());
         }
         Optional<Offer> buyOffer = station.getBuy(item);
         if (data.getSellOfferPrice() > 0){
@@ -352,10 +364,10 @@ public abstract class AbstractImporter implements Importer {
                 o.setPrice(data.getBuyOfferPrice());
                 o.setCount(data.getDemand());
             } else {
-                galaxyService.addOfferToStation(station, OFFER_TYPE.BUY, item, data.getSellOfferPrice(), data.getDemand());
+                station.addOffer(item, OFFER_TYPE.BUY, data.getSellOfferPrice(), data.getDemand());
             }
         } else {
-            if (buyOffer.isPresent()) station.remove(buyOffer.get());
+            if (buyOffer.isPresent()) station.removeOffer(buyOffer.get());
         }
     }
 
@@ -364,21 +376,24 @@ public abstract class AbstractImporter implements Importer {
         if (item == null){
             if (flags.contains(IMPORT_FLAG.ADD_SHIP)){
                 LOG.debug("{} - is new ship, adding", data.getName());
-                Optional<Group> group = galaxyService.getGalaxy().getGroups().stream().filter(Group::isShip).findAny();
+                Optional<Group> group = galaxyService.getGalaxy().getGroups().stream().filter(g -> g.getType().isShip()).findAny();
                 if (group.isPresent()) {
-                    item = galaxyService.addItem(data.getName(), group.get());
+                    item = galaxyService.getGalaxy().addItem(data.getName(), group.get());
                 } else {
                     LOG.warn("Not found ship group, skip");
                 }
             }
         }
         if (item != null && flags.contains(IMPORT_FLAG.ITEMS)){
-            updateOffers(galaxyService, station, item, data);
+            updateOffers(station, item, data);
         }
         return item;
     }
 
-    protected void updateOffers(GalaxyService galaxyService, Station station, Item item, ShipData data){
+    protected void updateOffers(Station station, Item item, ShipData data){
+        if (data.getId() != null){
+            item.setEID(data.getId());
+        }
         Long price = data.getPrice();
         if (price == null) return;
         Optional<Offer> sellOffer = station.getSell(item);
@@ -388,10 +403,10 @@ public abstract class AbstractImporter implements Importer {
                 o.setPrice(price);
                 o.setCount(1);
             } else {
-                galaxyService.addOfferToStation(station, OFFER_TYPE.SELL, item, price, 1);
+                station.addOffer(item, OFFER_TYPE.SELL, price, 1);
             }
         } else {
-            if (sellOffer.isPresent()) station.remove(sellOffer.get());
+            if (sellOffer.isPresent()) station.removeOffer(sellOffer.get());
         }
     }
 
@@ -400,21 +415,24 @@ public abstract class AbstractImporter implements Importer {
         if (item == null){
             if (flags.contains(IMPORT_FLAG.ADD_MODULE)){
                 LOG.debug("{} - is new module, adding", data.getName());
-                Group group = findGroup(galaxyService, data.getGroupId(), data.getGroupName());
+                Group group = findGroup(galaxyService, data.getGroupName());
                 if (group != null) {
-                    item = galaxyService.addItem(data.getName(), group);
+                    item = galaxyService.getGalaxy().addItem(data.getName(), group);
                 } else {
                     LOG.warn("Not found outfit group, id = {}, name = {} skip module", data.getGroupId(), data.getGroupName());
                 }
             }
         }
         if (item != null && flags.contains(IMPORT_FLAG.ITEMS)){
-            updateOffers(galaxyService, station, item, data);
+            updateOffers(station, item, data);
         }
         return item;
     }
 
-    protected void updateOffers(GalaxyService galaxyService, Station station, Item item, ModuleData data){
+    protected void updateOffers(Station station, Item item, ModuleData data){
+        if (data.getId() != null){
+            item.setEID(data.getId());
+        }
         Optional<Offer> sellOffer = station.getSell(item);
         if (data.getPrice() > 0){
             if (sellOffer.isPresent()){
@@ -422,10 +440,10 @@ public abstract class AbstractImporter implements Importer {
                 o.setPrice(data.getPrice());
                 o.setCount(1);
             } else {
-                galaxyService.addOfferToStation(station, OFFER_TYPE.SELL, item, data.getPrice(), 1);
+                station.addOffer(item, OFFER_TYPE.SELL, data.getPrice(), 1);
             }
         } else {
-            if (sellOffer.isPresent()) station.remove(sellOffer.get());
+            if (sellOffer.isPresent()) station.removeOffer(sellOffer.get());
         }
     }
 
@@ -433,7 +451,7 @@ public abstract class AbstractImporter implements Importer {
     private StarSystem findStarSystem(GalaxyService galaxyService, Long id, String name){
         Optional<StarSystem> system;
         if (flags.contains(IMPORT_FLAG.SEARCH_BY_ID) && id != null){
-            system = galaxyService.findStarSystemById(id);
+            system = galaxyService.findStarSystemByEID(id);
         } else {
             system = galaxyService.findStarSystemByName(name);
         }
@@ -444,7 +462,7 @@ public abstract class AbstractImporter implements Importer {
     private MinorFaction findFaction(GalaxyService galaxyService, Long id, String name){
         Optional<MinorFaction> faction;
         if (flags.contains(IMPORT_FLAG.SEARCH_BY_ID) && id != null){
-            faction = galaxyService.findFactionById(id);
+            faction = galaxyService.findFactionByEID(id);
         } else {
             faction = galaxyService.findFactionByName(name);
         }
@@ -455,7 +473,7 @@ public abstract class AbstractImporter implements Importer {
     private Station findStation(GalaxyService galaxyService, StarSystem system, Long id, String name){
         Optional<Station> station;
         if (flags.contains(IMPORT_FLAG.SEARCH_BY_ID) && id != null){
-            station = galaxyService.findStationById(id);
+            station = galaxyService.findStationByEID(id);
         } else {
             station = galaxyService.findStationByName(system, name);
         }
@@ -466,7 +484,7 @@ public abstract class AbstractImporter implements Importer {
     private Item findItem(GalaxyService galaxyService, Long id, String name){
         Optional<Item> item;
         if (flags.contains(IMPORT_FLAG.SEARCH_BY_ID) && id != null){
-            item = galaxyService.findItemById(id);
+            item = galaxyService.findItemByEID(id);
         } else {
             item = galaxyService.findItemByName(name);
         }
@@ -474,13 +492,9 @@ public abstract class AbstractImporter implements Importer {
     }
 
     @Nullable
-    private Group findGroup(GalaxyService galaxyService, Long id, String name){
+    private Group findGroup(GalaxyService galaxyService, String name){
         Optional<Group> group;
-        if (flags.contains(IMPORT_FLAG.SEARCH_BY_ID) && id != null){
-            group = galaxyService.findGroupById(id);
-        } else {
-            group = galaxyService.findGroupByName(name);
-        }
+        group = galaxyService.findGroupByName(name);
         return group.orElse(null);
     }
 

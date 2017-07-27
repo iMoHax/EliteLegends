@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface StarSystem {
-    long getId();
+    Long getEID();
+    void setEID(Long eid);
 
     String getName();
     void setName(String name);
@@ -20,8 +21,9 @@ public interface StarSystem {
     void setPopulation(long population);
 
     Collection<MinorFactionState> getFactions();
-    MinorFactionState add(MinorFactionState factionState);
-    boolean remove(MinorFactionState factionState);
+    MinorFactionState addFaction(MinorFaction faction, STATE_TYPE state, float influence);
+    boolean removeFaction(MinorFactionState factionState);
+    void clearFactions();
 
     MinorFaction getControllingFaction();
     void setControllingFaction(MinorFaction faction);
@@ -37,8 +39,9 @@ public interface StarSystem {
     void setIncome(long income);
 
     Collection<Station> get();
-    Station add(Station station);
-    boolean remove(Station station);
+    Station addStation(String name, STATION_TYPE type, double distance);
+    boolean removeStation(Station station);
+    void clearStations();
 
     default boolean isEmpty(){
         return get().isEmpty();

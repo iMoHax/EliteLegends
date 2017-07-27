@@ -18,9 +18,9 @@ public class MarketUtils {
 
     public static boolean isIncorrect(Station station, boolean isIllegal, OFFER_TYPE type){
         if (type == OFFER_TYPE.SELL){
-            return isIllegal || !station.has(SERVICE_TYPE.MARKET);
+            return isIllegal || !station.hasService(SERVICE_TYPE.MARKET);
         } else {
-            return isIllegal ? !station.has(SERVICE_TYPE.BLACK_MARKET) : !station.has(SERVICE_TYPE.MARKET);
+            return isIllegal ? !station.hasService(SERVICE_TYPE.BLACK_MARKET) : !station.hasService(SERVICE_TYPE.MARKET);
         }
     }
 

@@ -9,10 +9,10 @@ import java.util.Collection;
 import java.util.Objects;
 
 public interface Item extends Comparable<Item> {
-    long getId();
+    Long getEID();
+    void setEID(Long eid);
 
     String getName();
-    void setName(String name);
 
     Group getGroup();
     void setGroup(Group group);

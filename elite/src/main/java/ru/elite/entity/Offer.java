@@ -1,15 +1,18 @@
 package ru.elite.entity;
 
+import org.jetbrains.annotations.NotNull;
 import ru.elite.core.OFFER_TYPE;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-public interface Offer {
-    long getId();
+public interface Offer extends Comparable<Offer> {
+
+    Station getStation();
+    void removeStation();
 
     Item getItem();
     OFFER_TYPE getType();
-    Station getStation();
 
     double getPrice();
     void setPrice(double price);
@@ -25,4 +28,19 @@ public interface Offer {
 
     LocalDateTime getModifiedTime();
     void setModifiedTime(LocalDateTime time);
+
+
+
+    @Override
+    default int compareTo(@NotNull Offer other) {
+        Objects.requireNonNull(other, "Not compare with null");
+        if (this == other) return 0;
+        int cmp = getType().compareTo(other.getType());
+        if (cmp != 0) return cmp;
+        cmp = Double.compare(getPrice(), other.getPrice());
+        if (cmp != 0) return cmp;
+        cmp = getStation().compareTo(other.getStation());
+        if (cmp != 0) return cmp;
+        return getItem().compareTo(other.getItem());
+    }
 }
