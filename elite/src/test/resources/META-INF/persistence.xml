@@ -5,6 +5,7 @@
         <description>Elite Dangerous JPA Persistence Unit</description>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+        <class>ru.elite.store.jpa.entity.BodyImpl</class>
         <class>ru.elite.store.jpa.entity.CommanderImpl</class>
         <class>ru.elite.store.jpa.entity.FactionRules</class>
         <class>ru.elite.store.jpa.entity.FactionStates</class>

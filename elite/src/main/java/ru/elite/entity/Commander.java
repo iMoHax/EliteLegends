@@ -23,6 +23,9 @@ public interface Commander {
     Station getStation();
     void setStation(Station station);
 
+    Body getBody();
+    void setBody(Body body);
+
     boolean isLanded();
     void setLanded(boolean landed);
 

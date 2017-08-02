@@ -43,6 +43,11 @@ public interface StarSystem {
     boolean removeStation(Station station);
     void clearStations();
 
+    Collection<Body> getBodies();
+    Body addBody(String name, BODY_TYPE type);
+    boolean removeBody(Body body);
+    void clearBodies();
+
     default boolean isEmpty(){
         return get().isEmpty();
     }

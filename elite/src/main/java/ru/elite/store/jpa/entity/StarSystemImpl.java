@@ -1,10 +1,7 @@
 package ru.elite.store.jpa.entity;
 
 import ru.elite.core.*;
-import ru.elite.entity.MinorFaction;
-import ru.elite.entity.MinorFactionState;
-import ru.elite.entity.StarSystem;
-import ru.elite.entity.Station;
+import ru.elite.entity.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -65,6 +62,9 @@ public class StarSystemImpl implements StarSystem {
 
     @OneToMany(mappedBy = "starSystem", fetch = FetchType.LAZY, targetEntity = StationImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Station> stations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "starSystem", fetch = FetchType.LAZY, targetEntity = BodyImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Body> bodies = new ArrayList<>();
 
     @Column(name = "modified", nullable = false)
     private LocalDateTime modifiedTime;
@@ -233,6 +233,32 @@ public class StarSystemImpl implements StarSystem {
     public void clearStations() {
         stations.forEach(Station::removeStarSystem);
         stations.clear();
+    }
+
+    @Override
+    public Collection<Body> getBodies() {
+        List<? extends Body> s = bodies;
+        return Collections.unmodifiableCollection(s);
+    }
+
+    @Override
+    public Body addBody(String name, BODY_TYPE type) {
+        Body body = new BodyImpl(this, name, type);
+        bodies.add(body);
+        return body;
+    }
+
+    @Override
+    public boolean removeBody(Body body) {
+        boolean removed = bodies.remove(body);
+        body.removeStarSystem();
+        return removed;
+    }
+
+    @Override
+    public void clearBodies() {
+        bodies.forEach(Body::removeStarSystem);
+        bodies.clear();
     }
 
     public LocalDateTime getModifiedTime() {

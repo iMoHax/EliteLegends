@@ -51,6 +51,10 @@ public class CommanderImpl implements Commander {
     @JoinColumn(name = "station_id")
     private Station station;
 
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = BodyImpl.class)
+    @JoinColumn(name = "body_id")
+    private Body body;
+
     private Double latitude;
 
     private Double longitude;
@@ -128,6 +132,16 @@ public class CommanderImpl implements Commander {
     @Override
     public void setStation(Station station) {
         this.station = station;
+    }
+
+    @Override
+    public Body getBody() {
+        return body;
+    }
+
+    @Override
+    public void setBody(Body body) {
+        this.body = body;
     }
 
     @Override
