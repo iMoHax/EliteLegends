@@ -7,11 +7,12 @@ import ru.elite.core.SECURITY_LEVEL;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 public abstract class StarSystemDataBase implements StarSystemData {
     @Override
-    public Long getId() {
-        return null;
+    public Optional<Long> getId() {
+        return Optional.empty();
     }
 
     @Override
@@ -29,10 +30,9 @@ public abstract class StarSystemDataBase implements StarSystemData {
         return Double.NaN;
     }
 
-    @Nullable
     @Override
-    public Long getPopulation() {
-        return null;
+    public Optional<Long> getPopulation() {
+        return Optional.empty();
     }
 
     @Nullable
@@ -41,28 +41,24 @@ public abstract class StarSystemDataBase implements StarSystemData {
         return null;
     }
 
-    @Nullable
     @Override
-    public SECURITY_LEVEL getSecurity() {
-        return null;
+    public Optional<SECURITY_LEVEL> getSecurity() {
+        return Optional.empty();
     }
 
-    @Nullable
     @Override
-    public POWER getPower() {
-        return null;
+    public Optional<POWER> getPower() {
+        return Optional.empty();
     }
 
-    @Nullable
     @Override
-    public POWER_STATE getPowerState() {
-        return null;
+    public Optional<POWER_STATE> getPowerState() {
+        return Optional.empty();
     }
 
-    @Nullable
     @Override
-    public Long getIncome() {
-        return null;
+    public Optional<Long> getIncome() {
+        return Optional.empty();
     }
 
     @Nullable
@@ -79,7 +75,12 @@ public abstract class StarSystemDataBase implements StarSystemData {
 
     @Nullable
     @Override
-    public LocalDateTime getModifiedTime() {
+    public Collection<BodyData> getBodies() {
         return null;
+    }
+
+    @Override
+    public Optional<LocalDateTime> getModifiedTime() {
+        return Optional.empty();
     }
 }

@@ -6,30 +6,27 @@ import ru.elite.entity.MinorFaction;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 public interface StarSystemData {
-    @Nullable
-    Long getId();
+    Optional<Long> getId();
     String getName();
 
     double getX();
     double getY();
     double getZ();
 
-    Long getPopulation();
+    Optional<Long> getPopulation();
 
     @Nullable
     MinorFactionData getFaction();
 
-    @Nullable
-    SECURITY_LEVEL getSecurity();
+    Optional<SECURITY_LEVEL> getSecurity();
 
-    @Nullable
-    POWER getPower();
-    @Nullable
-    POWER_STATE getPowerState();
+    Optional<POWER> getPower();
+    Optional<POWER_STATE> getPowerState();
 
-    Long getIncome();
+    Optional<Long> getIncome();
 
     @Nullable
     Collection<StationData> getStations();
@@ -38,6 +35,8 @@ public interface StarSystemData {
     Collection<MinorFactionData> getFactions();
 
     @Nullable
-    LocalDateTime getModifiedTime();
+    Collection<BodyData> getBodies();
+
+    Optional<LocalDateTime> getModifiedTime();
 
 }

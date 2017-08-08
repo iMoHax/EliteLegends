@@ -15,7 +15,7 @@ import java.util.*;
         @NamedQuery(name = "Station.getNamesInSystem", query = "select s.name from StationImpl s where s.starSystem.id = :starSystemId"),
         @NamedQuery(name = "Station.findInSystemByName", query = "select s from StationImpl s where s.name = :name and s.starSystem.id = :starSystemId"),
         @NamedQuery(name = "Station.findByEID", query = "select s from StationImpl s where s.eid = :eid"),
-        @NamedQuery(name = "Station.deleteFromStationByName", query = "delete from StationImpl s where s.name = :name and s.starSystem.id = :starSystemId")
+        @NamedQuery(name = "Station.deleteFromSystemByName", query = "delete from StationImpl s where s.name = :name and s.starSystem.id = :starSystemId")
 })
 @Table(name = "ELITE_STATIONS")
 public class StationImpl implements Station {

@@ -8,6 +8,12 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "Ship.getSIDsInCmdr", query = "select s.sid from ShipImpl s where s.cmdr.id = :cmdrId"),
+        @NamedQuery(name = "Ship.findInCmdrBySID", query = "select s from ShipImpl s where s.sid = :sid and s.cmdr.id = :cmdrId"),
+        @NamedQuery(name = "Ship.findByEID", query = "select s from ShipImpl s where s.eid = :eid"),
+        @NamedQuery(name = "Ship.deleteFromCmdrBySID", query = "delete from ShipImpl s where s.sid = :sid and s.cmdr.id = :cmdrId")
+})
 @Table(name = "SHIPS")
 public class ShipImpl implements Ship {
     @Id

@@ -8,6 +8,7 @@ import ru.elite.utils.edlog.EDConverter;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 public class DockedEvent {
     private final JsonNode node;
@@ -110,8 +111,8 @@ public class DockedEvent {
 
             @Nullable
             @Override
-            public STATION_TYPE getType() {
-                return DockedEvent.this.getStationType();
+            public Optional<STATION_TYPE> getType() {
+                return Optional.of(DockedEvent.this.getStationType());
             }
 
             @Nullable
@@ -122,13 +123,13 @@ public class DockedEvent {
 
             @Nullable
             @Override
-            public ECONOMIC_TYPE getEconomic() {
-                return DockedEvent.this.getEconomic();
+            public Optional<ECONOMIC_TYPE> getEconomic() {
+                return Optional.of(DockedEvent.this.getEconomic());
             }
 
             @Override
-            public double getDistance() {
-                return DockedEvent.this.getDistance();
+            public Optional<Double> getDistance() {
+                return Optional.of(DockedEvent.this.getDistance());
             }
         };
     }
@@ -152,8 +153,8 @@ public class DockedEvent {
             }
 
             @Override
-            public STATE_TYPE getState() {
-                return DockedEvent.this.getFactionState();
+            public Optional<STATE_TYPE> getState() {
+                return Optional.of(DockedEvent.this.getFactionState());
             }
         };
     }

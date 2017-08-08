@@ -12,6 +12,7 @@ import ru.elite.store.imp.entities.StarSystemDataBase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FSDJumpEvent {
@@ -183,22 +184,19 @@ public class FSDJumpEvent {
                 return controllingFaction;
             }
 
-            @Nullable
             @Override
-            public SECURITY_LEVEL getSecurity() {
-                return FSDJumpEvent.this.getSecurityLevel();
+            public Optional<SECURITY_LEVEL> getSecurity() {
+                return Optional.of(FSDJumpEvent.this.getSecurityLevel());
             }
 
-            @Nullable
             @Override
-            public POWER getPower() {
-                return FSDJumpEvent.this.getPower();
+            public Optional<POWER> getPower() {
+                return Optional.of(FSDJumpEvent.this.getPower());
             }
 
-            @Nullable
             @Override
-            public POWER_STATE getPowerState() {
-                return FSDJumpEvent.this.getPowerState();
+            public Optional<POWER_STATE> getPowerState() {
+                return Optional.of(FSDJumpEvent.this.getPowerState());
             }
 
             @Nullable
@@ -212,7 +210,6 @@ public class FSDJumpEvent {
 
     private MinorFactionData asMinorFactionData(){
         return new MinorFactionDataBase() {
-            @Nullable
             @Override
             public String getName() {
                 return FSDJumpEvent.this.getControllingFaction();
@@ -229,8 +226,8 @@ public class FSDJumpEvent {
             }
 
             @Override
-            public STATE_TYPE getState() {
-                return FSDJumpEvent.this.getFactionState();
+            public Optional<STATE_TYPE> getState() {
+                return Optional.of(FSDJumpEvent.this.getFactionState());
             }
         };
     }

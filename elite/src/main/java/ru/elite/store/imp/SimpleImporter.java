@@ -6,6 +6,7 @@ import ru.elite.entity.Galaxy;
 import ru.elite.entity.StarSystem;
 import ru.elite.entity.Station;
 import ru.elite.store.GalaxyService;
+import ru.elite.store.imp.entities.CommanderData;
 import ru.elite.store.imp.entities.StarSystemData;
 import ru.elite.store.imp.entities.StationData;
 
@@ -33,8 +34,13 @@ public class SimpleImporter extends AbstractImporter {
         throw new UnsupportedOperationException("Is SimpleImporter, getSystem() unsupported, use importStation or importSystem");
     }
 
+    @Override
+    public CommanderData getCmdr() {
+        throw new UnsupportedOperationException("Is SimpleImporter, getCmdr() unsupported, use importCmdr");
+    }
+
     public Station importStation(GalaxyService galaxyService, StarSystemData importData){
-        StarSystem system = impSystem(galaxyService, importData);
+        StarSystem system = impSystem(galaxyService, importData, false);
         if (system != null) {
             Collection<StationData> stations = importData.getStations();
             if (stations == null || stations.isEmpty()){

@@ -170,9 +170,30 @@ public class GalaxyStore implements GalaxyService, Galaxy {
     }
 
     @Override
+    public Collection<String> getAllBodyNames(StarSystem system) {
+        TypedQuery<String> query = manager.createNamedQuery("Body.getNamesInSystem", String.class);
+        query.setParameter("starSystemId", ((StarSystemImpl)system).getId());
+        return query.getResultList();
+    }
+
+    @Override
     public Collection<String> getAllMinorFactionsNames(StarSystem system) {
         TypedQuery<String> query = manager.createNamedQuery("MinorFactionState.getNamesInSystem", String.class);
         query.setParameter("starSystemId", ((StarSystemImpl)system).getId());
+        return query.getResultList();
+    }
+
+    @Override
+    public Collection<Long> getAllShipSids(Commander cmdr) {
+        TypedQuery<Long> query = manager.createNamedQuery("Ship.getSIDsInCmdr", Long.class);
+        query.setParameter("cmdrId", ((CommanderImpl)cmdr).getId());
+        return query.getResultList();
+    }
+
+    @Override
+    public Collection<String> getAllSlotNames(Ship ship) {
+        TypedQuery<String> query = manager.createNamedQuery("Slot.getNamesInShip", String.class);
+        query.setParameter("shipId", ((ShipImpl)ship).getId());
         return query.getResultList();
     }
 
@@ -311,11 +332,57 @@ public class GalaxyStore implements GalaxyService, Galaxy {
     }
 
     @Override
+    public Optional<Body> findBodyByName(StarSystem system, String name) {
+        TypedQuery<Body> query = manager.createNamedQuery("Body.findInSystemByName", Body.class);
+        query.setParameter("starSystemId", ((StarSystemImpl)system).getId());
+        query.setParameter("name", name);
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException ex){
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Body> findBodyByEID(long eid) {
+        TypedQuery<Body> query = manager.createNamedQuery("Body.findByEID", Body.class);
+        query.setParameter("eid", eid);
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException ex){
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Optional<Offer> findOffer(Station station, Item item, OFFER_TYPE type) {
         TypedQuery<Offer> query = manager.createNamedQuery("Offer.findInStationByItem", Offer.class);
         query.setParameter("stationId", ((StationImpl)station).getId());
         query.setParameter("itemId", ((ItemImpl)item).getId());
         query.setParameter("offerType", type);
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException ex){
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Ship> findShipBySid(Commander cmdr, long sid) {
+        TypedQuery<Ship> query = manager.createNamedQuery("Ship.findInCmdrBySID", Ship.class);
+        query.setParameter("cmdrId", ((CommanderImpl)cmdr).getId());
+        query.setParameter("sid", sid);
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException ex){
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Ship> findShipByEID(long eid) {
+        TypedQuery<Ship> query = manager.createNamedQuery("Ship.findByEID", Ship.class);
+        query.setParameter("eid", eid);
         try {
             return Optional.ofNullable(query.getSingleResult());
         } catch (NoResultException ex){
@@ -334,9 +401,18 @@ public class GalaxyStore implements GalaxyService, Galaxy {
 
     @Override
     public boolean removeStationByName(StarSystem system, String stationName) {
-        Query query = manager.createNamedQuery("Station.deleteFromStationByName");
+        Query query = manager.createNamedQuery("Station.deleteFromSystemByName");
         query.setParameter("starSystemId", ((StarSystemImpl)system).getId());
         query.setParameter("name", stationName);
+        query.executeUpdate();
+        return true;
+    }
+
+    @Override
+    public boolean removeBodyByName(StarSystem system, String bodyName) {
+        Query query = manager.createNamedQuery("Body.deleteFromSystemByName");
+        query.setParameter("starSystemId", ((StarSystemImpl)system).getId());
+        query.setParameter("name", bodyName);
         query.executeUpdate();
         return true;
     }
@@ -346,6 +422,24 @@ public class GalaxyStore implements GalaxyService, Galaxy {
         Query query = manager.createNamedQuery("Offer.deleteAllFromStationByItem");
         query.setParameter("stationId", ((StationImpl)station).getId());
         query.setParameter("itemId", ((ItemImpl)item).getId());
+        query.executeUpdate();
+        return true;
+    }
+
+    @Override
+    public boolean removeShipBySid(Commander cmdr, long sid) {
+        Query query = manager.createNamedQuery("Ship.deleteFromCmdrBySID");
+        query.setParameter("cmdrId", ((CommanderImpl)cmdr).getId());
+        query.setParameter("sid", sid);
+        query.executeUpdate();
+        return true;
+    }
+
+    @Override
+    public boolean removeSlotByName(Ship ship, String slotName) {
+        Query query = manager.createNamedQuery("Slot.deleteFromShipByName");
+        query.setParameter("shipId", ((ShipImpl)ship).getId());
+        query.setParameter("name", slotName);
         query.executeUpdate();
         return true;
     }

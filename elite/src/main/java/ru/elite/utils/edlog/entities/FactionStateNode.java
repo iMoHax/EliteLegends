@@ -6,8 +6,7 @@ import ru.elite.core.*;
 import ru.elite.store.imp.entities.*;
 import ru.elite.utils.edlog.EDConverter;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Optional;
 
 public class FactionStateNode {
     private final JsonNode node;
@@ -65,16 +64,14 @@ public class FactionStateNode {
                 return FactionStateNode.this.getAllegiance();
             }
 
-            @Nullable
             @Override
-            public STATE_TYPE getState() {
-                return FactionStateNode.this.getFactionState();
+            public Optional<STATE_TYPE> getState() {
+                return Optional.of(FactionStateNode.this.getFactionState());
             }
 
             @Override
-            public float getInfluence() {
-                Float influence = FactionStateNode.this.getInfluence();
-                return influence != null ? influence : super.getInfluence();
+            public Optional<Float> getInfluence() {
+                return Optional.of(FactionStateNode.this.getInfluence());
             }
         };
     }

@@ -2,36 +2,32 @@ package ru.elite.store.imp.entities;
 
 import org.jetbrains.annotations.Nullable;
 import ru.elite.core.*;
-import ru.elite.entity.MinorFaction;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 public interface StationData {
-    @Nullable
-    Long getId();
+    Optional<Long> getId();
     String getName();
 
-    double getDistance();
+    Optional<Double> getDistance();
 
-    STATION_TYPE getType();
+    Optional<STATION_TYPE> getType();
     MinorFactionData getFaction();
 
-    @Nullable
-    ECONOMIC_TYPE getEconomic();
-    @Nullable
-    ECONOMIC_TYPE getSubEconomic();
+    Optional<ECONOMIC_TYPE> getEconomic();
+    Optional<ECONOMIC_TYPE> getSubEconomic();
     @Nullable
     Collection<SERVICE_TYPE> getServices();
 
     @Nullable
     Collection<ItemData> getCommodities();
     @Nullable
-    Collection<ModuleData> getModules();
+    Collection<ItemModuleData> getModules();
     @Nullable
-    Collection<ShipData> getShips();
+    Collection<ItemShipData> getShips();
 
-    @Nullable
-    LocalDateTime getModifiedTime();
+    Optional<LocalDateTime> getModifiedTime();
 
 }

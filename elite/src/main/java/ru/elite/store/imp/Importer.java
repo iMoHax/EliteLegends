@@ -1,6 +1,7 @@
 package ru.elite.store.imp;
 
 import ru.elite.store.GalaxyService;
+import ru.elite.store.imp.entities.CommanderData;
 import ru.elite.store.imp.entities.StarSystemData;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ public interface Importer {
     void cancel();
     boolean next() throws IOException;
     StarSystemData getSystem();
+    CommanderData getCmdr();
 
     void imp(GalaxyService galaxyService) throws IOException;
 

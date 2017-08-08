@@ -1,14 +1,14 @@
 package ru.elite.store.imp.entities;
 
-import org.jetbrains.annotations.Nullable;
 import ru.elite.core.FACTION;
 import ru.elite.core.GOVERNMENT;
 import ru.elite.core.STATE_TYPE;
 
+import java.util.Optional;
+
 public interface MinorFactionData {
 
-    @Nullable
-    Long getId();
+    Optional<Long> getId();
 
     String getName();
 
@@ -16,15 +16,12 @@ public interface MinorFactionData {
 
     FACTION getFaction();
 
-    @Nullable
-    STATE_TYPE getState();
+    Optional<STATE_TYPE> getState();
 
-    float getInfluence();
+    Optional<Float> getInfluence();
 
-    @Nullable
-    String getHomeSystemName();
+    Optional<String> getHomeSystemName();
 
-    @Nullable
-    Boolean isPlayers();
+    Optional<Boolean> isPlayers();
 
 }

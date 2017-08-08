@@ -1,35 +1,32 @@
 package ru.elite.store.imp.entities;
 
-import org.jetbrains.annotations.Nullable;
 import ru.elite.core.STATE_TYPE;
 
+import java.util.Optional;
+
 public abstract class MinorFactionDataBase implements MinorFactionData {
-    @Nullable
     @Override
-    public Long getId() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public STATE_TYPE getState() {
-        return null;
+    public Optional<Long> getId() {
+        return Optional.empty();
     }
 
     @Override
-    public float getInfluence() {
-        return Float.NaN;
+    public Optional<STATE_TYPE> getState() {
+        return Optional.empty();
     }
 
-    @Nullable
     @Override
-    public String getHomeSystemName() {
-        return null;
+    public Optional<Float> getInfluence() {
+        return Optional.empty();
     }
 
-    @Nullable
     @Override
-    public Boolean isPlayers() {
-        return null;
+    public Optional<String> getHomeSystemName() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Boolean> isPlayers() {
+        return Optional.empty();
     }
 }

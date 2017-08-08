@@ -8,6 +8,10 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "Slot.getNamesInShip", query = "select s.name from SlotImpl s where s.ship.id = :shipId"),
+        @NamedQuery(name = "Slot.deleteFromShipByName", query = "delete from SlotImpl s where s.name = :name and s.ship.id = :shipId")
+})
 @Table(name = "SHIP_SLOTS")
 public class SlotImpl implements Slot {
     @Id

@@ -5,22 +5,22 @@ import ru.elite.core.*;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 public abstract class StationDataBase implements StationData {
     @Override
-    public Long getId() {
-        return null;
+    public Optional<Long> getId() {
+        return Optional.empty();
     }
 
     @Override
-    public double getDistance() {
-        return Double.NaN;
+    public Optional<Double> getDistance() {
+        return Optional.empty();
     }
 
-    @Nullable
     @Override
-    public STATION_TYPE getType() {
-        return null;
+    public Optional<STATION_TYPE> getType() {
+        return Optional.empty();
     }
 
     @Nullable
@@ -29,16 +29,14 @@ public abstract class StationDataBase implements StationData {
         return null;
     }
 
-    @Nullable
     @Override
-    public ECONOMIC_TYPE getEconomic() {
-        return null;
+    public Optional<ECONOMIC_TYPE> getEconomic() {
+        return Optional.empty();
     }
 
-    @Nullable
     @Override
-    public ECONOMIC_TYPE getSubEconomic() {
-        return null;
+    public Optional<ECONOMIC_TYPE> getSubEconomic() {
+        return Optional.empty();
     }
 
     @Nullable
@@ -55,19 +53,18 @@ public abstract class StationDataBase implements StationData {
 
     @Nullable
     @Override
-    public Collection<ModuleData> getModules() {
+    public Collection<ItemModuleData> getModules() {
         return null;
     }
 
     @Nullable
     @Override
-    public Collection<ShipData> getShips() {
+    public Collection<ItemShipData> getShips() {
         return null;
     }
 
-    @Nullable
     @Override
-    public LocalDateTime getModifiedTime() {
-        return null;
+    public Optional<LocalDateTime> getModifiedTime() {
+        return Optional.empty();
     }
 }
