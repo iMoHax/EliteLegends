@@ -499,7 +499,7 @@ public abstract class AbstractImporter implements Importer {
             bodiesList.addAll(galaxyService.getAllBodyNames(system));
         }
         for (BodyData b : bodies) {
-            if (b.getType().isStation) continue;
+            if (b.getType().isStation()) continue;
             Body body = impBody(galaxyService, system, b);
             if (body != null){
                 bodiesList.remove(body.getName());
