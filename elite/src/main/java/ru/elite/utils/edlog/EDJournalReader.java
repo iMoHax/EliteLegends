@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.elite.utils.edlog.entities.DockedEvent;
-import ru.elite.utils.edlog.entities.FSDJumpEvent;
+import ru.elite.utils.edlog.entities.events.DockedEvent;
+import ru.elite.utils.edlog.entities.events.FSDJumpEvent;
 
 import java.io.IOException;
 
@@ -50,11 +50,11 @@ public class EDJournalReader extends LogReader {
     }
 
     protected void docked(DockedEvent dockedEvent) {
-        LOG.debug("Docked to station: {} / {}", dockedEvent.getStarSystem(), dockedEvent.getStation());
+        LOG.debug("Docked to station: {} / {}", dockedEvent.getStarSystem(), dockedEvent.getStation().getName());
     }
 
     protected void jump(FSDJumpEvent jumpEvent) {
-        LOG.debug("Jump to system {}, coordinates: {}, {}, {}", jumpEvent.getStarSystem(), jumpEvent.getX(), jumpEvent.getY(), jumpEvent.getZ());
+        LOG.debug("Jump to system {}, coordinates: {}, {}, {}", jumpEvent.getStarSystem().getName(), jumpEvent.getStarSystem().getX(), jumpEvent.getStarSystem().getY(), jumpEvent.getStarSystem().getZ());
     }
 
     protected void undock() {

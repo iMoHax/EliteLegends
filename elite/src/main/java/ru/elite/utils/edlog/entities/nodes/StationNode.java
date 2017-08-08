@@ -1,34 +1,27 @@
-package ru.elite.utils.edlog.entities;
+package ru.elite.utils.edlog.entities.nodes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.Nullable;
 import ru.elite.core.*;
-import ru.elite.store.imp.entities.*;
+import ru.elite.store.imp.entities.MinorFactionData;
+import ru.elite.store.imp.entities.MinorFactionDataBase;
+import ru.elite.store.imp.entities.StationData;
+import ru.elite.store.imp.entities.StationDataBase;
 import ru.elite.utils.edlog.EDConverter;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
-public class DockedEvent {
+public class StationNode {
     private final JsonNode node;
 
-    public DockedEvent(JsonNode node) {
+    public StationNode(JsonNode node) {
         this.node = node;
     }
 
-    public String getStation(){
+    public String getName(){
         JsonNode n = node.get("StationName");
         if (n == null){
-            throw new IllegalArgumentException("Event Docked don't have StationName attribute");
-        }
-        return n.asText();
-    }
-
-    public String getStarSystem(){
-        JsonNode n = node.get("StarSystem");
-        if (n == null){
-            throw new IllegalArgumentException("Event Docked don't have StarSystem attribute");
+            throw new IllegalArgumentException("Event don't have StationName attribute");
         }
         return n.asText();
     }
@@ -64,55 +57,23 @@ public class DockedEvent {
     }
 
     @Nullable
-    public STATE_TYPE getFactionState(){
-        JsonNode n = node.get("FactionState");
-        return n != null ? EDConverter.asFactionState(n.asText()) : null;
-    }
-
-    public double getDistance(){
+    public Double getDistance(){
         JsonNode n = node.get("DistFromStarLS");
-        if (n == null || !n.isNumber()){
-            throw new IllegalArgumentException("Event Docked don't have correct DistFromStarLS attribute");
-        }
-        return n.asDouble();
+        return n != null && n.isNumber() ? n.asDouble() : null;
     }
 
-    public boolean isCockpitBreach(){
-        JsonNode n = node.get("CockpitBreach");
-        return n != null && n.asBoolean();
-    }
-
-
-    public StarSystemData asImportData(){
-        final Collection<StationData> stationData = Collections.singleton(asStationData());
-        return new StarSystemDataBase() {
-
-            @Override
-            public String getName() {
-                return DockedEvent.this.getStarSystem();
-            }
-
-            @Nullable
-            @Override
-            public Collection<StationData> getStations() {
-                return stationData;
-            }
-        };
-    }
-
-    private StationData asStationData(){
+    public StationData asImportData(){
         final MinorFactionData controllingFaction = asMinorFactionData();
         return new StationDataBase(){
 
             @Override
             public String getName() {
-                return DockedEvent.this.getStation();
+                return StationNode.this.getName();
             }
 
-            @Nullable
             @Override
             public Optional<STATION_TYPE> getType() {
-                return Optional.of(DockedEvent.this.getStationType());
+                return Optional.of(StationNode.this.getStationType());
             }
 
             @Nullable
@@ -121,15 +82,14 @@ public class DockedEvent {
                 return controllingFaction;
             }
 
-            @Nullable
             @Override
             public Optional<ECONOMIC_TYPE> getEconomic() {
-                return Optional.of(DockedEvent.this.getEconomic());
+                return Optional.of(StationNode.this.getEconomic());
             }
 
             @Override
             public Optional<Double> getDistance() {
-                return Optional.of(DockedEvent.this.getDistance());
+                return Optional.of(StationNode.this.getDistance());
             }
         };
     }
@@ -139,23 +99,19 @@ public class DockedEvent {
             @Nullable
             @Override
             public String getName() {
-                return DockedEvent.this.getControllingFaction();
+                return StationNode.this.getControllingFaction();
             }
 
             @Override
             public GOVERNMENT getGovernment() {
-                return DockedEvent.this.getGovernment();
+                return StationNode.this.getGovernment();
             }
 
             @Override
             public FACTION getFaction() {
-                return DockedEvent.this.getAllegiance();
+                return StationNode.this.getAllegiance();
             }
 
-            @Override
-            public Optional<STATE_TYPE> getState() {
-                return Optional.of(DockedEvent.this.getFactionState());
-            }
         };
     }
 

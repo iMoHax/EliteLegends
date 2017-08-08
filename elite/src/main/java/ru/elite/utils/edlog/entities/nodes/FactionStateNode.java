@@ -1,4 +1,4 @@
-package ru.elite.utils.edlog.entities;
+package ru.elite.utils.edlog.entities.nodes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.Nullable;
@@ -6,6 +6,8 @@ import ru.elite.core.*;
 import ru.elite.store.imp.entities.*;
 import ru.elite.utils.edlog.EDConverter;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 public class FactionStateNode {
@@ -47,6 +49,41 @@ public class FactionStateNode {
         return n != null && n.isNumber() ? n.floatValue() : null;
     }
 
+    @Nullable
+    private STATE_TYPE getState(JsonNode node){
+        JsonNode n = node.get("State");
+        return n != null ? EDConverter.asFactionState(n.asText()) : null;
+    }
+
+    public Collection<STATE_TYPE> getPendingStates(){
+        JsonNode n = node.get("RecoveringStates");
+        Collection<STATE_TYPE> states = new ArrayList<>();
+        if (n != null && n.isArray()){
+            for (JsonNode j : n) {
+                STATE_TYPE state = getState(j);
+                if (state != null){
+                    states.add(state);
+                }
+            }
+        }
+        return states;
+    }
+
+    public Collection<STATE_TYPE> getRecoveringStates(){
+        JsonNode n = node.get("RecoveringStates");
+        Collection<STATE_TYPE> states = new ArrayList<>();
+        if (n != null && n.isArray()){
+            for (JsonNode j : n) {
+                STATE_TYPE state = getState(j);
+                if (state != null){
+                    states.add(state);
+                }
+            }
+        }
+        return states;
+    }
+
+
     public MinorFactionData asImportData(){
         return new MinorFactionDataBase() {
             @Override
@@ -72,6 +109,18 @@ public class FactionStateNode {
             @Override
             public Optional<Float> getInfluence() {
                 return Optional.of(FactionStateNode.this.getInfluence());
+            }
+
+            @Nullable
+            @Override
+            public Collection<STATE_TYPE> getPendingStates() {
+                return FactionStateNode.this.getPendingStates();
+            }
+
+            @Nullable
+            @Override
+            public Collection<STATE_TYPE> getRecoveringStates() {
+                return FactionStateNode.this.getRecoveringStates();
             }
         };
     }

@@ -182,4 +182,21 @@ public class EDConverter {
         return null;
     }
 
+    @Nullable
+    public static BODY_TYPE asBodyType(String type) {
+        if (type == null) return null;
+        switch (type) {
+            case "Null": return BODY_TYPE.BARYCENTRE;
+            case "Star": return BODY_TYPE.STAR;
+            case "Planet": return BODY_TYPE.PLANET;
+            case "PlanetaryRing": return BODY_TYPE.PLANETARY_RING;
+            case "StellarRing": return BODY_TYPE.STELLAR_RING;
+            case "Station": return BODY_TYPE.STATION;
+            case "AsteroidCluster": return BODY_TYPE.ASTEROID_CLUSTER;
+        }
+
+        LOG.warn("Unknown body type: {}", type);
+        return null;
+    }
+
 }

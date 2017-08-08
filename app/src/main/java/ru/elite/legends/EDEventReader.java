@@ -3,8 +3,8 @@ package ru.elite.legends;
 import ru.elite.legends.controllers.EventsManager;
 import ru.elite.legends.entities.EVENT_TYPE;
 import ru.elite.utils.edlog.EDJournalReader;
-import ru.elite.utils.edlog.entities.DockedEvent;
-import ru.elite.utils.edlog.entities.FSDJumpEvent;
+import ru.elite.utils.edlog.entities.events.DockedEvent;
+import ru.elite.utils.edlog.entities.events.FSDJumpEvent;
 
 public class EDEventReader extends EDJournalReader {
     private final EventsManager manager;

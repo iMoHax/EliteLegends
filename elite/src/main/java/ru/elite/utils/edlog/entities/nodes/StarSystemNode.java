@@ -1,13 +1,13 @@
-package ru.elite.utils.edlog.entities;
+package ru.elite.utils.edlog.entities.nodes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.Nullable;
 import ru.elite.core.*;
 import ru.elite.store.imp.entities.MinorFactionData;
 import ru.elite.store.imp.entities.MinorFactionDataBase;
-import ru.elite.utils.edlog.EDConverter;
 import ru.elite.store.imp.entities.StarSystemData;
 import ru.elite.store.imp.entities.StarSystemDataBase;
+import ru.elite.utils.edlog.EDConverter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,17 +15,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class FSDJumpEvent {
+public class StarSystemNode {
     private final JsonNode node;
 
-    public FSDJumpEvent(JsonNode node) {
+    public StarSystemNode(JsonNode node) {
         this.node = node;
     }
 
-    public String getStarSystem(){
+    public String getName(){
         JsonNode n = node.get("StarSystem");
         if (n == null){
-            throw new IllegalArgumentException("Event FSDJump don't have StarSystem attribute");
+            throw new IllegalArgumentException("Event don't have StarSystem attribute");
         }
         return n.asText();
     }
@@ -33,7 +33,7 @@ public class FSDJumpEvent {
     public double getX(){
         JsonNode n = node.get("StarPos");
         if (n == null || !n.isArray() || n.size() < 3){
-            throw new IllegalArgumentException("Event FSDJump don't have correct StarPos attribute");
+            throw new IllegalArgumentException("Event don't have correct StarPos attribute");
         }
         return n.get(0).asDouble();
     }
@@ -41,7 +41,7 @@ public class FSDJumpEvent {
     public double getY(){
         JsonNode n = node.get("StarPos");
         if (n == null || !n.isArray() || n.size() < 3){
-            throw new IllegalArgumentException("Event FSDJump don't have correct StarPos attribute");
+            throw new IllegalArgumentException("Event don't have correct StarPos attribute");
         }
         return n.get(1).asDouble();
     }
@@ -49,11 +49,10 @@ public class FSDJumpEvent {
     public double getZ(){
         JsonNode n = node.get("StarPos");
         if (n == null || !n.isArray() || n.size() < 3){
-            throw new IllegalArgumentException("Event FSDJump don't have correct StarPos attribute");
+            throw new IllegalArgumentException("Event don't have correct StarPos attribute");
         }
         return n.get(2).asDouble();
     }
-
 
     @Nullable
     public GOVERNMENT getGovernment(){
@@ -82,8 +81,7 @@ public class FSDJumpEvent {
     @Nullable
     public POWER getPower(){
         JsonNode n = node.get("Powers");
-        if (n == null) return null;
-        if (n.isArray()){
+        if (n != null && n.isArray()){
             n = n.get(0);
         }
         return n != null ? EDConverter.asPower(n.asText()) : null;
@@ -108,41 +106,6 @@ public class FSDJumpEvent {
     }
 
     @Nullable
-    public String getBodyName(){
-        JsonNode n = node.get("Body");
-        return n != null ? n.asText() : null;
-    }
-
-    public double getJumpDistance(){
-        JsonNode n = node.get("JumpDist");
-        if (n == null || !n.isNumber()){
-            throw new IllegalArgumentException("Event FSDJump don't have correct JumpDist attribute");
-        }
-        return n.asDouble();
-    }
-
-    public double getFuelUsed(){
-        JsonNode n = node.get("FuelUsed");
-        if (n == null || !n.isNumber()){
-            throw new IllegalArgumentException("Event FSDJump don't have correct FuelUsed attribute");
-        }
-        return n.asDouble();
-    }
-
-    public double getFuelLevel(){
-        JsonNode n = node.get("FuelLevel");
-        if (n == null || !n.isNumber()){
-            throw new IllegalArgumentException("Event FSDJump don't have correct FuelLevel attribute");
-        }
-        return n.asDouble();
-    }
-
-    public boolean isBoostUsed(){
-        JsonNode n = node.get("BoostUsed");
-        return n != null && n.asBoolean();
-    }
-
-    @Nullable
     public Collection<FactionStateNode> getFactions(){
         JsonNode n = node.get("Factions");
         if (n == null || !n.isArray()) return null;
@@ -154,28 +117,28 @@ public class FSDJumpEvent {
     }
 
     public StarSystemData asImportData(){
-        Collection<FactionStateNode> nodes = FSDJumpEvent.this.getFactions();
+        Collection<FactionStateNode> nodes = StarSystemNode.this.getFactions();
         final List<MinorFactionData> factions = nodes != null ? nodes.stream().map(FactionStateNode::asImportData).collect(Collectors.toList()) : null;
         final MinorFactionData controllingFaction = asMinorFactionData();
         return new StarSystemDataBase() {
             @Override
             public String getName() {
-                return FSDJumpEvent.this.getStarSystem();
+                return StarSystemNode.this.getName();
             }
 
             @Override
             public double getX() {
-                return FSDJumpEvent.this.getX();
+                return StarSystemNode.this.getX();
             }
 
             @Override
             public double getY() {
-                return FSDJumpEvent.this.getY();
+                return StarSystemNode.this.getY();
             }
 
             @Override
             public double getZ() {
-                return FSDJumpEvent.this.getZ();
+                return StarSystemNode.this.getZ();
             }
 
             @Nullable
@@ -186,17 +149,17 @@ public class FSDJumpEvent {
 
             @Override
             public Optional<SECURITY_LEVEL> getSecurity() {
-                return Optional.of(FSDJumpEvent.this.getSecurityLevel());
+                return Optional.of(StarSystemNode.this.getSecurityLevel());
             }
 
             @Override
             public Optional<POWER> getPower() {
-                return Optional.of(FSDJumpEvent.this.getPower());
+                return Optional.of(StarSystemNode.this.getPower());
             }
 
             @Override
             public Optional<POWER_STATE> getPowerState() {
-                return Optional.of(FSDJumpEvent.this.getPowerState());
+                return Optional.of(StarSystemNode.this.getPowerState());
             }
 
             @Nullable
@@ -212,22 +175,22 @@ public class FSDJumpEvent {
         return new MinorFactionDataBase() {
             @Override
             public String getName() {
-                return FSDJumpEvent.this.getControllingFaction();
+                return StarSystemNode.this.getControllingFaction();
             }
 
             @Override
             public GOVERNMENT getGovernment() {
-                return FSDJumpEvent.this.getGovernment();
+                return StarSystemNode.this.getGovernment();
             }
 
             @Override
             public FACTION getFaction() {
-                return FSDJumpEvent.this.getAllegiance();
+                return StarSystemNode.this.getAllegiance();
             }
 
             @Override
             public Optional<STATE_TYPE> getState() {
-                return Optional.of(FSDJumpEvent.this.getFactionState());
+                return Optional.of(StarSystemNode.this.getFactionState());
             }
         };
     }
