@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.elite.core.OFFER_TYPE;
 import ru.elite.core.SERVICE_TYPE;
+import ru.elite.core.STATE_STATUS;
+import ru.elite.core.STATE_TYPE;
 import ru.elite.entity.*;
 import ru.elite.store.GalaxyService;
 import ru.elite.store.imp.entities.*;
@@ -157,6 +159,15 @@ public abstract class AbstractImporter implements Importer {
     protected void updateFactionState(MinorFactionState state, MinorFactionData data){
         data.getState().ifPresent(state::setState);
         data.getInfluence().ifPresent(state::setInfluence);
+        Collection<STATE_TYPE> states = data.getPendingStates();
+        if (states != null){
+            states.forEach(s -> state.setStateStatus(s, STATE_STATUS.PENDING));
+        }
+        states = data.getRecoveringStates();
+        if (states != null){
+            states.forEach(s -> state.setStateStatus(s, STATE_STATUS.RECOVERY));
+        }
+
     }
 
     protected MinorFaction impFaction(GalaxyService galaxyService, MinorFactionData data){
@@ -488,6 +499,7 @@ public abstract class AbstractImporter implements Importer {
             bodiesList.addAll(galaxyService.getAllBodyNames(system));
         }
         for (BodyData b : bodies) {
+            if (b.getType().isStation) continue;
             Body body = impBody(galaxyService, system, b);
             if (body != null){
                 bodiesList.remove(body.getName());

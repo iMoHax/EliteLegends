@@ -1,7 +1,9 @@
 package ru.elite.store.imp.entities;
 
+import org.jetbrains.annotations.Nullable;
 import ru.elite.core.STATE_TYPE;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public abstract class MinorFactionDataBase implements MinorFactionData {
@@ -28,5 +30,17 @@ public abstract class MinorFactionDataBase implements MinorFactionData {
     @Override
     public Optional<Boolean> isPlayers() {
         return Optional.empty();
+    }
+
+    @Nullable
+    @Override
+    public Collection<STATE_TYPE> getPendingStates() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Collection<STATE_TYPE> getRecoveringStates() {
+        return null;
     }
 }
