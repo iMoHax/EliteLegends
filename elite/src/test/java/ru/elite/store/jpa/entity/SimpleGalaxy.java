@@ -14,6 +14,7 @@ public class SimpleGalaxy {
     public final Group FOODS;
     public final Group MINERALS;
     public final Group METALS;
+    public final Group SALVAGE;
     public final Group SHIPS;
     public final Group FSD;
     public final Group SHIELD;
@@ -61,12 +62,13 @@ public class SimpleGalaxy {
             FOODS = galaxy.addGroup("foods", GROUP_TYPE.MARKET);
             MINERALS = galaxy.addGroup("minerals", GROUP_TYPE.MARKET);
             METALS = galaxy.addGroup("metals", GROUP_TYPE.MARKET);
+            SALVAGE = galaxy.addGroup("salvage", GROUP_TYPE.MARKET);
             SHIPS = galaxy.addGroup("ships", GROUP_TYPE.SHIP);
             FSD = galaxy.addGroup("fsd", GROUP_TYPE.OUTFIT);
             SHIELD = galaxy.addGroup("shield", GROUP_TYPE.OUTFIT);
-            MATERIAL = galaxy.addGroup("material", GROUP_TYPE.MATERIAL);
+            MATERIAL = galaxy.addGroup("materials", GROUP_TYPE.MATERIAL);
             MANUFACTURED = galaxy.addGroup("manufactured", GROUP_TYPE.MATERIAL);
-            DATA = galaxy.addGroup("data", GROUP_TYPE.DATA);
+            DATA = galaxy.addGroup("datas", GROUP_TYPE.DATA);
 
             ALGAE = galaxy.addItem("algae", FOODS);
             COFFEE = galaxy.addItem("coffee", FOODS);
@@ -96,7 +98,7 @@ public class SimpleGalaxy {
 
             EG_MAIN_HQ = EURYALE.addStation("EG Main HQ", STATION_TYPE.CORIOLIS_STARPORT, 795.7);
 
-            CMDR = galaxy.addCmdr("MoHax");
+            CMDR = galaxy.addCmdr("MoHaxTest");
             COURIER = CMDR.addShip(1, "Empire_Courier");
 
 

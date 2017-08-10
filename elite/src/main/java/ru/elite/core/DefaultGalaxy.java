@@ -1,8 +1,15 @@
 package ru.elite.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.elite.entity.Galaxy;
+import ru.elite.store.GalaxyService;
+
+import javax.persistence.EntityTransaction;
 
 public class DefaultGalaxy {
+    private final static Logger LOG = LoggerFactory.getLogger(DefaultGalaxy.class);
+
     public static final String GROUP_CHEMICALS = "chemicals";
     public static final String GROUP_CONSUMER_ITEMS = "consumer_items";
     public static final String GROUP_FOODS = "foods";
@@ -23,6 +30,17 @@ public class DefaultGalaxy {
     public static final String GROUP_MANUFACTURED = "manufactured";
     public static final String GROUP_DATAS = "datas";
     public static final String DEFAULT_MARKET_GROUP = GROUP_SALVAGE;
+
+    public static void init(GalaxyService galaxyService){
+        EntityTransaction transaction = galaxyService.startTransaction();
+        try {
+            initGroups(galaxyService.getGalaxy());
+            transaction.commit();
+        } catch (Exception e){
+            LOG.error("Error on init default galaxy: {}", e);
+            transaction.rollback();
+        }
+    }
 
     public static void initGroups(Galaxy galaxy){
         galaxy.addGroup(GROUP_CHEMICALS, GROUP_TYPE.MARKET);

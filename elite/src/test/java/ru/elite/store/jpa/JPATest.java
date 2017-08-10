@@ -14,13 +14,13 @@ public class JPATest extends Assert {
 
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUpClass() throws Exception {
         EMF = Persistence.createEntityManagerFactory("ru.elite.JPATestUnit");
         DEFAULT_GALAXY = new SimpleGalaxy(EMF);
     }
 
     @AfterClass
-    public static void tearDown() throws Exception {
+    public static void tearDownClass() throws Exception {
         EMF.close();
     }
 }
