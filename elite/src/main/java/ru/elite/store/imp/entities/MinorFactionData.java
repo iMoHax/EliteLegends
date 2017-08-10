@@ -14,9 +14,9 @@ public interface MinorFactionData {
 
     String getName();
 
-    GOVERNMENT getGovernment();
+    Optional<GOVERNMENT> getGovernment();
 
-    FACTION getFaction();
+    Optional<FACTION> getFaction();
 
     Optional<STATE_TYPE> getState();
 

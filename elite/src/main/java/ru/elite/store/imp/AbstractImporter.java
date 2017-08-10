@@ -28,6 +28,11 @@ public abstract class AbstractImporter implements Importer {
     protected abstract void before() throws IOException;
     protected abstract void after() throws IOException;
 
+    protected abstract boolean next() throws IOException;
+    protected abstract StarSystemData getSystem();
+    protected abstract CommanderData getCmdr();
+
+
     @Override
     public void addFlag(IMPORT_FLAG flag) {
         flags.add(flag);
@@ -63,10 +68,13 @@ public abstract class AbstractImporter implements Importer {
                     LOG.warn("System {} not found", systemData.getName());
                 }
             }
+            CommanderData cmdr = getCmdr();
+            impCommander(galaxyService, cmdr);
+            transaction.commit();
         } catch (Exception ex){
             LOG.error("Error on import:", ex);
+            transaction.rollback();
         } finally {
-            transaction.commit();
             after();
         }
     }
@@ -110,7 +118,9 @@ public abstract class AbstractImporter implements Importer {
         data.getPopulation().ifPresent(system::setPopulation);
         if (data.getFaction() != null){
             MinorFaction faction = impFaction(galaxyService, data.getFaction());
-            system.setControllingFaction(faction);
+            if (faction != null){
+                system.setControllingFaction(faction);
+            }
         }
         data.getSecurity().ifPresent(system::setSecurity);
         if (data.getPower().isPresent() && data.getPowerState().isPresent()) {
@@ -142,18 +152,19 @@ public abstract class AbstractImporter implements Importer {
     @Nullable
     protected MinorFactionState impFactionState(GalaxyService galaxyService, StarSystem system, MinorFaction faction, MinorFactionData data){
         Optional<MinorFactionState> factionState = galaxyService.findFactionState(system, faction);
+        MinorFactionState fs;
         if (!factionState.isPresent()){
             if (data.getInfluence().isPresent() && data.getState().isPresent()){
                 LOG.debug("{} - is new faction in system {}, adding", faction.getName(), system.getName());
-                return system.addFaction(faction, data.getState().get(), data.getInfluence().get());
+                fs = system.addFaction(faction, data.getState().get(), data.getInfluence().get());
             } else {
                 return null;
             }
         } else {
-            MinorFactionState fs = factionState.get();
-            updateFactionState(fs, data);
-            return fs;
+            fs = factionState.get();
         }
+        updateFactionState(fs, data);
+        return fs;
     }
 
     protected void updateFactionState(MinorFactionState state, MinorFactionData data){
@@ -170,11 +181,16 @@ public abstract class AbstractImporter implements Importer {
 
     }
 
+    @Nullable
     protected MinorFaction impFaction(GalaxyService galaxyService, MinorFactionData data){
         MinorFaction faction = findFaction(galaxyService, data.getId(), data.getName());
         if (faction == null){
-            LOG.debug("{} - is new faction, adding", data.getName());
-            faction = galaxyService.getGalaxy().addFaction(data.getName(), data.getFaction(), data.getGovernment());
+            if (data.getFaction().isPresent() && data.getGovernment().isPresent()){
+                LOG.debug("{} - is new faction, adding", data.getName());
+                faction = galaxyService.getGalaxy().addFaction(data.getName(), data.getFaction().get(), data.getGovernment().get());
+            } else {
+                return null;
+            }
         }
         updateFaction(galaxyService, faction, data);
         return faction;
@@ -185,12 +201,8 @@ public abstract class AbstractImporter implements Importer {
         if (data.getName() != null){
             faction.setName(data.getName());
         }
-        if (data.getGovernment() != null){
-            faction.setGovernment(data.getGovernment());
-        }
-        if (data.getFaction() != null){
-            faction.setFaction(data.getFaction());
-        }
+        data.getGovernment().ifPresent(faction::setGovernment);
+        data.getFaction().ifPresent(faction::setFaction);
         data.getHomeSystemName().ifPresent(v -> {
             Optional<StarSystem> system = galaxyService.findStarSystemByName(v);
             if (system.isPresent()){
@@ -249,7 +261,9 @@ public abstract class AbstractImporter implements Importer {
         data.getType().ifPresent(station::setType);
         if (data.getFaction() != null){
             MinorFaction faction = impFaction(galaxyService, data.getFaction());
-            station.setFaction(faction);
+            if (faction != null){
+                station.setFaction(faction);
+            }
         }
         data.getEconomic().ifPresent(station::setEconomic);
         data.getSubEconomic().ifPresent(station::setSubEconomic);
@@ -455,7 +469,7 @@ public abstract class AbstractImporter implements Importer {
         data.getCredits().ifPresent(cmdr::setCredits);
         StarSystemData starSystemData = data.getStarSystem();
         if (starSystemData != null){
-            StarSystem starSystem = impSystem(galaxyService, starSystemData);
+            StarSystem starSystem = impSystem(galaxyService, starSystemData, true);
             if (starSystem != null){
                 cmdr.setStarSystem(starSystem);
                 StationData stationData = data.getStation();

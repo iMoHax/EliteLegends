@@ -25,17 +25,17 @@ public class SimpleImporter extends AbstractImporter {
     }
 
     @Override
-    public boolean next() throws IOException {
+    protected boolean next() throws IOException {
         throw new UnsupportedOperationException("Is SimpleImporter, next() unsupported, use importStation or importSystem");
     }
 
     @Override
-    public StarSystemData getSystem() {
+    protected StarSystemData getSystem() {
         throw new UnsupportedOperationException("Is SimpleImporter, getSystem() unsupported, use importStation or importSystem");
     }
 
     @Override
-    public CommanderData getCmdr() {
+    protected CommanderData getCmdr() {
         throw new UnsupportedOperationException("Is SimpleImporter, getCmdr() unsupported, use importCmdr");
     }
 

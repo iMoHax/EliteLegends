@@ -15,9 +15,6 @@ public interface Importer {
     void setFlags(EnumSet<IMPORT_FLAG> flags);
 
     void cancel();
-    boolean next() throws IOException;
-    StarSystemData getSystem();
-    CommanderData getCmdr();
 
     void imp(GalaxyService galaxyService) throws IOException;
 
