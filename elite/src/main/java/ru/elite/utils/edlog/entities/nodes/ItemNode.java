@@ -45,7 +45,7 @@ public class ItemNode {
 
             @Override
             public Optional<String> getGroupName() {
-                return Optional.of(defaultGroup);
+                return Optional.ofNullable(defaultGroup);
             }
         };
     }

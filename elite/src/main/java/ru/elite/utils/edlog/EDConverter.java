@@ -36,23 +36,24 @@ public class EDConverter {
     @Nullable
     public static GOVERNMENT asGovernment(String government){
         if (government == null) return null;
+        government = government.replaceFirst("\\$government_(.+);","$1");
         switch (government){
-            case "$government_Anarchy;": return GOVERNMENT.ANARCHY;
-            case "$government_Colony;": return GOVERNMENT.COLONY;
-            case "$government_Communism;": return GOVERNMENT.COMMUNISM;
-            case "$government_Confederacy;": return GOVERNMENT.CONFEDERACY;
-            case "$government_Cooperative;": return GOVERNMENT.COOPERATIVE;
-            case "$government_Corporate;": return GOVERNMENT.CORPORATE;
-            case "$government_Democracy;": return GOVERNMENT.DEMOCRACY;
-            case "$government_Dictatorship;": return GOVERNMENT.DICTATORSHIP;
-            case "$government_Feudal;": return GOVERNMENT.FEUDAL;
-            case "$government_Imperial;": return GOVERNMENT.IMPERIAL;
-            case "$government_Patronage;": return GOVERNMENT.PATRONAGE;
-            case "$government_PrisonColony;": return GOVERNMENT.PRISON_COLONY;
-            case "$government_Theocracy;": return GOVERNMENT.THEOCRACY;
-            case "$government_engineer;": return GOVERNMENT.ENGINEER;
-            case "$government_Workshop;": return GOVERNMENT.WORKSHOP;
-            case "$government_None;": return GOVERNMENT.NONE;
+            case "Anarchy": return GOVERNMENT.ANARCHY;
+            case "Colony": return GOVERNMENT.COLONY;
+            case "Communism": return GOVERNMENT.COMMUNISM;
+            case "Confederacy": return GOVERNMENT.CONFEDERACY;
+            case "Cooperative": return GOVERNMENT.COOPERATIVE;
+            case "Corporate": return GOVERNMENT.CORPORATE;
+            case "Democracy": return GOVERNMENT.DEMOCRACY;
+            case "Dictatorship": return GOVERNMENT.DICTATORSHIP;
+            case "Feudal": return GOVERNMENT.FEUDAL;
+            case "Imperial": return GOVERNMENT.IMPERIAL;
+            case "Patronage": return GOVERNMENT.PATRONAGE;
+            case "PrisonColony": return GOVERNMENT.PRISON_COLONY;
+            case "Theocracy": return GOVERNMENT.THEOCRACY;
+            case "engineer": return GOVERNMENT.ENGINEER;
+            case "Workshop": return GOVERNMENT.WORKSHOP;
+            case "None": return GOVERNMENT.NONE;
         }
         LOG.warn("Unknown government type: {}", government);
         return null;

@@ -87,47 +87,47 @@ public class ModuleNode {
 
             @Override
             public Optional<Boolean> isActive() {
-                return Optional.of(ModuleNode.this.isOn());
+                return Optional.ofNullable(ModuleNode.this.isOn());
             }
 
             @Override
             public Optional<Integer> getPriority() {
-                return Optional.of(ModuleNode.this.getPriority());
+                return Optional.ofNullable(ModuleNode.this.getPriority());
             }
 
             @Override
             public Optional<String> getModuleName() {
-                return Optional.of(ModuleNode.this.getName());
+                return Optional.ofNullable(ModuleNode.this.getName());
             }
 
             @Override
             public Optional<String> getBlueprint() {
-                return Optional.of(ModuleNode.this.getBlueprint());
+                return Optional.ofNullable(ModuleNode.this.getBlueprint());
             }
 
             @Override
             public Optional<Integer> getBlueprintLevel() {
-                return Optional.of(ModuleNode.this.getBlueprintLevel());
+                return Optional.ofNullable(ModuleNode.this.getBlueprintLevel());
             }
 
             @Override
             public Optional<Double> getHealth() {
-                return Optional.of(ModuleNode.this.getHealth());
+                return Optional.ofNullable(ModuleNode.this.getHealth());
             }
 
             @Override
             public Optional<Long> getAmmoClip() {
-                return Optional.of(ModuleNode.this.getAmmoClip());
+                return Optional.ofNullable(ModuleNode.this.getAmmoClip());
             }
 
             @Override
             public Optional<Long> getAmmoHopper() {
-                return Optional.of(ModuleNode.this.getAmmoHopper());
+                return Optional.ofNullable(ModuleNode.this.getAmmoHopper());
             }
 
             @Override
             public Optional<Long> getCost() {
-                return Optional.of(ModuleNode.this.getCost());
+                return Optional.ofNullable(ModuleNode.this.getCost());
             }
         };
     }

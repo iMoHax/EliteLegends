@@ -56,7 +56,7 @@ public class FactionStateNode {
     }
 
     public Collection<STATE_TYPE> getPendingStates(){
-        JsonNode n = node.get("RecoveringStates");
+        JsonNode n = node.get("PendingStates");
         Collection<STATE_TYPE> states = new ArrayList<>();
         if (n != null && n.isArray()){
             for (JsonNode j : n) {
@@ -92,23 +92,23 @@ public class FactionStateNode {
             }
 
             @Override
-            public GOVERNMENT getGovernment() {
-                return FactionStateNode.this.getGovernment();
+            public Optional<GOVERNMENT> getGovernment() {
+                return Optional.ofNullable(FactionStateNode.this.getGovernment());
             }
 
             @Override
-            public FACTION getFaction() {
-                return FactionStateNode.this.getAllegiance();
+            public Optional<FACTION> getFaction() {
+                return Optional.ofNullable(FactionStateNode.this.getAllegiance());
             }
 
             @Override
             public Optional<STATE_TYPE> getState() {
-                return Optional.of(FactionStateNode.this.getFactionState());
+                return Optional.ofNullable(FactionStateNode.this.getFactionState());
             }
 
             @Override
             public Optional<Float> getInfluence() {
-                return Optional.of(FactionStateNode.this.getInfluence());
+                return Optional.ofNullable(FactionStateNode.this.getInfluence());
             }
 
             @Nullable

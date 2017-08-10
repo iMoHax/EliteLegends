@@ -73,7 +73,7 @@ public class StationNode {
 
             @Override
             public Optional<STATION_TYPE> getType() {
-                return Optional.of(StationNode.this.getStationType());
+                return Optional.ofNullable(StationNode.this.getStationType());
             }
 
             @Nullable
@@ -84,12 +84,12 @@ public class StationNode {
 
             @Override
             public Optional<ECONOMIC_TYPE> getEconomic() {
-                return Optional.of(StationNode.this.getEconomic());
+                return Optional.ofNullable(StationNode.this.getEconomic());
             }
 
             @Override
             public Optional<Double> getDistance() {
-                return Optional.of(StationNode.this.getDistance());
+                return Optional.ofNullable(StationNode.this.getDistance());
             }
         };
     }
@@ -103,13 +103,13 @@ public class StationNode {
             }
 
             @Override
-            public GOVERNMENT getGovernment() {
-                return StationNode.this.getGovernment();
+            public Optional<GOVERNMENT> getGovernment() {
+                return  Optional.ofNullable(StationNode.this.getGovernment());
             }
 
             @Override
-            public FACTION getFaction() {
-                return StationNode.this.getAllegiance();
+            public Optional<FACTION> getFaction() {
+                return  Optional.ofNullable(StationNode.this.getAllegiance());
             }
 
         };

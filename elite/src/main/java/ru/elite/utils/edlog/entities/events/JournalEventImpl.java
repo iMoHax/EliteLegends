@@ -33,4 +33,11 @@ public class JournalEventImpl implements JournalEvent {
     public JsonNode getRaw() {
         return node;
     }
+
+    @Override
+    public String toString() {
+        return "JournalEventImpl{" +
+                "node=" + node +
+                '}';
+    }
 }

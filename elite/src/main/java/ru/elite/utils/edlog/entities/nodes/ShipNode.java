@@ -6,10 +6,7 @@ import ru.elite.store.imp.entities.ShipData;
 import ru.elite.store.imp.entities.ShipDataBase;
 import ru.elite.store.imp.entities.SlotData;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ShipNode {
@@ -64,7 +61,8 @@ public class ShipNode {
             return null;
         }
         Collection<ModuleNode> nodes = new ArrayList<>();
-        for (JsonNode jsonNode : n) {
+        for (Iterator<JsonNode> iterator = n.elements(); iterator.hasNext(); ) {
+            JsonNode jsonNode = iterator.next();
             nodes.add(new ModuleNode(jsonNode));
         }
         return nodes;
@@ -86,22 +84,22 @@ public class ShipNode {
 
             @Override
             public Optional<String> getName() {
-                return Optional.of(ShipNode.this.getShipName());
+                return Optional.ofNullable(ShipNode.this.getShipName());
             }
 
             @Override
             public Optional<String> getIdent() {
-                return Optional.of(ShipNode.this.getShipIdent());
+                return Optional.ofNullable(ShipNode.this.getShipIdent());
             }
 
             @Override
             public Optional<Double> getFuel() {
-                return Optional.of(ShipNode.this.getFuelLevel());
+                return Optional.ofNullable(ShipNode.this.getFuelLevel());
             }
 
             @Override
             public Optional<Double> getTank() {
-                return Optional.of(ShipNode.this.getFuelCapacity());
+                return Optional.ofNullable(ShipNode.this.getFuelCapacity());
             }
 
             @Nullable

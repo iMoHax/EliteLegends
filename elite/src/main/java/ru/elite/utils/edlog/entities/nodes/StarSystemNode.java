@@ -149,17 +149,17 @@ public class StarSystemNode {
 
             @Override
             public Optional<SECURITY_LEVEL> getSecurity() {
-                return Optional.of(StarSystemNode.this.getSecurityLevel());
+                return Optional.ofNullable(StarSystemNode.this.getSecurityLevel());
             }
 
             @Override
             public Optional<POWER> getPower() {
-                return Optional.of(StarSystemNode.this.getPower());
+                return Optional.ofNullable(StarSystemNode.this.getPower());
             }
 
             @Override
             public Optional<POWER_STATE> getPowerState() {
-                return Optional.of(StarSystemNode.this.getPowerState());
+                return Optional.ofNullable(StarSystemNode.this.getPowerState());
             }
 
             @Nullable
@@ -179,18 +179,18 @@ public class StarSystemNode {
             }
 
             @Override
-            public GOVERNMENT getGovernment() {
-                return StarSystemNode.this.getGovernment();
+            public  Optional<GOVERNMENT> getGovernment() {
+                return Optional.ofNullable(StarSystemNode.this.getGovernment());
             }
 
             @Override
-            public FACTION getFaction() {
-                return StarSystemNode.this.getAllegiance();
+            public  Optional<FACTION> getFaction() {
+                return Optional.ofNullable(StarSystemNode.this.getAllegiance());
             }
 
             @Override
             public Optional<STATE_TYPE> getState() {
-                return Optional.of(StarSystemNode.this.getFactionState());
+                return Optional.ofNullable(StarSystemNode.this.getFactionState());
             }
         };
     }

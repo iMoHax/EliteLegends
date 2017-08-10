@@ -55,7 +55,7 @@ public class StartupEvents {
     public CommanderData asImportData(){
         final Collection<InventoryEntryData> inventory = asInventory();
         final BodyData body = asBody();
-        final ShipData ship = loadoutEvent.getShip().asImportData();
+        final ShipData ship = asShip();
         final StarSystemData starSystem = locationEvent.getStarSystem().asImportData();
         StationNode stationNode = locationEvent.getStation();
         final StationData station = stationNode != null ? stationNode.asImportData() : null;
@@ -74,7 +74,7 @@ public class StartupEvents {
 
             @Override
             public Optional<Double> getCredits() {
-                return Optional.of(loadGameEvent.getCredits());
+                return Optional.ofNullable(loadGameEvent.getCredits());
             }
 
             @Nullable
@@ -97,17 +97,17 @@ public class StartupEvents {
 
             @Override
             public Optional<Boolean> isLanded() {
-                return Optional.of(loadGameEvent.isLanded());
+                return Optional.ofNullable(loadGameEvent.isLanded());
             }
 
             @Override
             public Optional<Double> getLatitude() {
-                return Optional.of(locationEvent.getLatitude());
+                return Optional.ofNullable(locationEvent.getLatitude());
             }
 
             @Override
             public Optional<Double> getLongitude() {
-                return Optional.of(locationEvent.getLongitude());
+                return Optional.ofNullable(locationEvent.getLongitude());
             }
 
             @Nullable
@@ -118,7 +118,7 @@ public class StartupEvents {
 
             @Override
             public Optional<Boolean> isDead() {
-                return Optional.of(loadGameEvent.isDead());
+                return Optional.ofNullable(loadGameEvent.isDead());
             }
 
             @Nullable
@@ -152,4 +152,63 @@ public class StartupEvents {
         };
     }
 
+    private ShipData asShip(){
+        final ShipData loadoutShip = loadoutEvent.getShip().asImportData();
+        final ShipData ship = loadGameEvent.getShip().asImportData();
+
+        return new ShipData() {
+            @Override
+            public Optional<Long> getId() {
+                return ship.getId();
+            }
+
+            @Override
+            public long getSid() {
+                return ship.getSid();
+            }
+
+            @Override
+            public String getType() {
+                return ship.getType();
+            }
+
+            @Override
+            public Optional<String> getName() {
+                return ship.getName();
+            }
+
+            @Override
+            public Optional<String> getIdent() {
+                return ship.getIdent();
+            }
+
+            @Override
+            public Optional<Double> getFuel() {
+                return ship.getFuel();
+            }
+
+            @Override
+            public Optional<Double> getTank() {
+                return ship.getTank();
+            }
+
+            @Nullable
+            @Override
+            public Collection<SlotData> getSlots() {
+                return loadoutShip.getSlots();
+            }
+        };
+    }
+
+    @Override
+    public String toString() {
+        return "StartupEvents{" +
+                "cargoEvent=" + cargoEvent +
+                ", loadoutEvent=" + loadoutEvent +
+                ", materialsEvent=" + materialsEvent +
+                ", loadGameEvent=" + loadGameEvent +
+                ", rankEvent=" + rankEvent +
+                ", locationEvent=" + locationEvent +
+                '}';
+    }
 }
