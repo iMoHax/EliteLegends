@@ -26,7 +26,7 @@ public class ShipImpl implements Ship {
     @JoinColumn(name = "cmdr_id", updatable = false, nullable = false)
     private Commander cmdr;
 
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false, nullable = false, unique = true)
     private long sid;
 
     @Column(updatable = false, nullable = false)

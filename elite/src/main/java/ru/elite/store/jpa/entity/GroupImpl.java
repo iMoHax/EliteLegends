@@ -18,7 +18,7 @@ public class GroupImpl implements Group {
     @GeneratedValue
     private Long id;
 
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false, nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)

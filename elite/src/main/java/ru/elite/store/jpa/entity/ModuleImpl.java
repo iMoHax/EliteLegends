@@ -15,7 +15,7 @@ public class ModuleImpl implements Module {
 
     private Long eid;
 
-    @OneToOne(targetEntity = SlotImpl.class, optional = false)
+    @OneToOne(targetEntity = SlotImpl.class, optional = false, cascade=CascadeType.PERSIST)
     @JoinColumn(name = "slot_id")
     private Slot slot;
 

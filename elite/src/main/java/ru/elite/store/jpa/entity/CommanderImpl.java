@@ -24,7 +24,7 @@ public class CommanderImpl implements Commander {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = ShipImpl.class)
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = ShipImpl.class, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "ship_id")
     private Ship ship;
 
@@ -43,15 +43,15 @@ public class CommanderImpl implements Commander {
     @Column(name = "rank_id" )
     private Map<String, Rank> ranks = new HashMap<>();
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = StarSystemImpl.class)
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = StarSystemImpl.class, cascade=CascadeType.PERSIST)
     @JoinColumn(name = "system_id")
     private StarSystem starSystem;
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = StationImpl.class)
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = StationImpl.class, cascade=CascadeType.PERSIST)
     @JoinColumn(name = "station_id")
     private Station station;
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = BodyImpl.class)
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = BodyImpl.class, cascade=CascadeType.PERSIST)
     @JoinColumn(name = "body_id")
     private Body body;
 
