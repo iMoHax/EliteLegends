@@ -66,7 +66,12 @@ public class EventImporter extends AbstractImporter {
     }
 
     private void _importEvent(JournalEvent event){
-        LOG.warn("unknown event: {}, skip", event);
+        if (event instanceof DockedEvent){
+            _importEvent((DockedEvent)event);
+        }
+        if (event instanceof FSDJumpEvent){
+            _importEvent((FSDJumpEvent)event);
+        }
     }
 
     private void _importEvent(StartupEvents event){

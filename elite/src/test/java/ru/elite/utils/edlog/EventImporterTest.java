@@ -14,6 +14,7 @@ import ru.elite.store.jpa.JPATest;
 import ru.elite.utils.edlog.entities.events.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +32,10 @@ public class EventImporterTest extends JPATest {
     private final String LOADGAME_EVENT="{ \"timestamp\":\"2017-08-10T11:01:46Z\", \"event\":\"LoadGame\", \"Commander\":\"MoHax\", \"Ship\":\"Empire_Courier\", \"ShipID\":31, \"ShipName\":\"Spacer\", \"ShipIdent\":\"A42MO\", \"FuelLevel\":7.000000, \"FuelCapacity\":8.000000, \"StartLanded\":true, \"GameMode\":\"Open\", \"Credits\":348755553, \"Loan\":0 }";
     private final String RANK_EVENT="{ \"timestamp\":\"2017-07-20T15:42:36Z\", \"event\":\"Rank\", \"Combat\":7, \"Trade\":7, \"Explore\":5, \"Empire\":5, \"Federation\":9, \"CQC\":0 }\n";
     private final String LOCATION_EVENT="{ \"timestamp\":\"2017-08-10T11:02:03Z\", \"event\":\"Location\", \"Latitude\":-8.669971, \"Longitude\":6.145895, \"Docked\":false, \"StarSystem\":\"Pethes\", \"StarPos\":[-20.656,-32.469,-11.906], \"SystemAllegiance\":\"Federation\", \"SystemEconomy\":\"$economy_Industrial;\", \"SystemEconomy_Localised\":\"Промышленность\", \"SystemGovernment\":\"$government_Corporate;\", \"SystemGovernment_Localised\":\"Корпоративная\", \"SystemSecurity\":\"$SYSTEM_SECURITY_medium;\", \"SystemSecurity_Localised\":\"Средн. ур. безопасности\", \"Body\":\"Pethes 2 b\", \"BodyType\":\"Planet\", \"Powers\":[ \"Yuri Grom\" ], \"PowerplayState\":\"Controlled\", \"Factions\":[ { \"Name\":\"Crew of Pethes\", \"FactionState\":\"Boom\", \"Government\":\"Anarchy\", \"Influence\":0.112000, \"Allegiance\":\"Federation\", \"PendingStates\":[ { \"State\":\"Famine\", \"Trend\":0 } ] }, { \"Name\":\"LHS 1050 Holdings\", \"FactionState\":\"Boom\", \"Government\":\"Corporate\", \"Influence\":0.071000, \"Allegiance\":\"Federation\" }, { \"Name\":\"LP 525-39 & Co\", \"FactionState\":\"Boom\", \"Government\":\"Corporate\", \"Influence\":0.089000, \"Allegiance\":\"Federation\" }, { \"Name\":\"Noblemen of Pethes\", \"FactionState\":\"Boom\", \"Government\":\"Feudal\", \"Influence\":0.062000, \"Allegiance\":\"Independent\" }, { \"Name\":\"FT Piscium Vision Network\", \"FactionState\":\"Boom\", \"Government\":\"Corporate\", \"Influence\":0.174000, \"Allegiance\":\"Federation\" }, { \"Name\":\"Pethes Purple Fortune Corp.\", \"FactionState\":\"None\", \"Government\":\"Corporate\", \"Influence\":0.371000, \"Allegiance\":\"Federation\", \"PendingStates\":[ { \"State\":\"War\", \"Trend\":0 } ], \"RecoveringStates\":[ { \"State\":\"Boom\", \"Trend\":0 } ] }, { \"Name\":\"LHS 134 Central & Co\", \"FactionState\":\"Boom\", \"Government\":\"Corporate\", \"Influence\":0.121000, \"Allegiance\":\"Federation\" } ], \"SystemFaction\":\"Pethes Purple Fortune Corp.\", \"FactionState\":\"Boom\" }";
+    private final String LOADGAME_DOCKED_EVENT="{ \"timestamp\":\"2017-08-10T14:17:26Z\", \"event\":\"LoadGame\", \"Commander\":\"MoHax\", \"Ship\":\"Empire_Courier\", \"ShipID\":31, \"ShipName\":\"Spacer\", \"ShipIdent\":\"A42MO\", \"FuelLevel\":7.000000, \"FuelCapacity\":8.000000, \"GameMode\":\"Solo\", \"Credits\":348755553, \"Loan\":0 }";
+    private final String LOCATION_DOCKED_EVENT="{ \"timestamp\":\"2017-08-10T14:17:29Z\", \"event\":\"Location\", \"Docked\":true, \"StationName\":\"Willis Port\", \"StationType\":\"Bernal\", \"StarSystem\":\"Wolf 124\", \"StarPos\":[-7.250,-27.156,-19.094], \"SystemAllegiance\":\"Federation\", \"SystemEconomy\":\"$economy_Industrial;\", \"SystemEconomy_Localised\":\"Промышленность\", \"SystemGovernment\":\"$government_Democracy;\", \"SystemGovernment_Localised\":\"Демократия\", \"SystemSecurity\":\"$SYSTEM_SECURITY_high;\", \"SystemSecurity_Localised\":\"Высок. ур. безопасности\", \"Body\":\"Willis Port\", \"BodyType\":\"Station\", \"Powers\":[ \"Zachary Hudson\" ], \"PowerplayState\":\"Exploited\", \"Factions\":[ { \"Name\":\"Green Party of Wolf 124\", \"FactionState\":\"Boom\", \"Government\":\"Democracy\", \"Influence\":0.481000, \"Allegiance\":\"Federation\" }, { \"Name\":\"LFT 142 Liberals\", \"FactionState\":\"War\", \"Government\":\"Democracy\", \"Influence\":0.023000, \"Allegiance\":\"Federation\", \"PendingStates\":[ { \"State\":\"Boom\", \"Trend\":1 } ] }, { \"Name\":\"League of Wolf 124 Liberty Party\", \"FactionState\":\"War\", \"Government\":\"Dictatorship\", \"Influence\":0.030000, \"Allegiance\":\"Independent\", \"PendingStates\":[ { \"State\":\"Boom\", \"Trend\":0 } ] }, { \"Name\":\"Wolf 124 Jet Life Industries\", \"FactionState\":\"Boom\", \"Government\":\"Corporate\", \"Influence\":0.149000, \"Allegiance\":\"Federation\" }, { \"Name\":\"Wolf 124 Crimson Drug Empire\", \"FactionState\":\"Boom\", \"Government\":\"Anarchy\", \"Influence\":0.076000, \"Allegiance\":\"Independent\" }, { \"Name\":\"Conservatives of Wolf 124\", \"FactionState\":\"Boom\", \"Government\":\"Dictatorship\", \"Influence\":0.093000, \"Allegiance\":\"Independent\" }, { \"Name\":\"Hutton Orbital Truckers Co-Operative\", \"FactionState\":\"None\", \"Government\":\"Cooperative\", \"Influence\":0.148000, \"Allegiance\":\"Independent\", \"PendingStates\":[ { \"State\":\"Outbreak\", \"Trend\":0 } ], \"RecoveringStates\":[ { \"State\":\"Boom\", \"Trend\":0 } ] } ], \"SystemFaction\":\"Green Party of Wolf 124\", \"FactionState\":\"Boom\" }";
+    private final String DOCKED_EVENT="{ \"timestamp\":\"2017-08-10T14:17:29Z\", \"event\":\"Docked\", \"StationName\":\"Willis Port\", \"StationType\":\"Bernal\", \"StarSystem\":\"Wolf 124\", \"StationFaction\":\"Green Party of Wolf 124\", \"FactionState\":\"Boom\", \"StationGovernment\":\"$government_Democracy;\", \"StationGovernment_Localised\":\"Демократия\", \"StationAllegiance\":\"Federation\", \"StationEconomy\":\"$economy_Industrial;\", \"StationEconomy_Localised\":\"Промышленность\", \"DistFromStarLS\":137.572388 }\n";
+    private final String JUMP_EVENT="{ \"timestamp\":\"2017-08-10T14:10:04Z\", \"event\":\"FSDJump\", \"StarSystem\":\"Wolf 124\", \"StarPos\":[-7.250,-27.156,-19.094], \"SystemAllegiance\":\"Federation\", \"SystemEconomy\":\"$economy_Industrial;\", \"SystemEconomy_Localised\":\"Промышленность\", \"SystemGovernment\":\"$government_Democracy;\", \"SystemGovernment_Localised\":\"Демократия\", \"SystemSecurity\":\"$SYSTEM_SECURITY_high;\", \"SystemSecurity_Localised\":\"Высок. ур. безопасности\", \"Powers\":[ \"Zachary Hudson\" ], \"PowerplayState\":\"Exploited\", \"JumpDist\":5.573, \"FuelUsed\":0.232189, \"FuelLevel\":6.765994, \"Factions\":[ { \"Name\":\"Green Party of Wolf 124\", \"FactionState\":\"Boom\", \"Government\":\"Democracy\", \"Influence\":0.481000, \"Allegiance\":\"Federation\" }, { \"Name\":\"LFT 142 Liberals\", \"FactionState\":\"War\", \"Government\":\"Democracy\", \"Influence\":0.023000, \"Allegiance\":\"Federation\", \"PendingStates\":[ { \"State\":\"Boom\", \"Trend\":1 } ] }, { \"Name\":\"League of Wolf 124 Liberty Party\", \"FactionState\":\"War\", \"Government\":\"Dictatorship\", \"Influence\":0.030000, \"Allegiance\":\"Independent\", \"PendingStates\":[ { \"State\":\"Boom\", \"Trend\":0 } ] }, { \"Name\":\"Wolf 124 Jet Life Industries\", \"FactionState\":\"Boom\", \"Government\":\"Corporate\", \"Influence\":0.149000, \"Allegiance\":\"Federation\" }, { \"Name\":\"Wolf 124 Crimson Drug Empire\", \"FactionState\":\"Boom\", \"Government\":\"Anarchy\", \"Influence\":0.076000, \"Allegiance\":\"Independent\" }, { \"Name\":\"Conservatives of Wolf 124\", \"FactionState\":\"Boom\", \"Government\":\"Dictatorship\", \"Influence\":0.093000, \"Allegiance\":\"Independent\" }, { \"Name\":\"Hutton Orbital Truckers Co-Operative\", \"FactionState\":\"None\", \"Government\":\"Cooperative\", \"Influence\":0.148000, \"Allegiance\":\"Independent\", \"PendingStates\":[ { \"State\":\"Outbreak\", \"Trend\":0 } ], \"RecoveringStates\":[ { \"State\":\"Boom\", \"Trend\":0 } ] } ], \"SystemFaction\":\"Green Party of Wolf 124\", \"FactionState\":\"Boom\" }";
 
     private GalaxyStore galaxy;
     private ObjectMapper mapper;
@@ -67,7 +72,22 @@ public class EventImporterTest extends JPATest {
         return startupEvents;
     }
 
+    private void clear(){
+        EntityTransaction transaction = galaxy.startTransaction();
+        galaxy.clearCmdrs();
+        transaction.commit();
+    }
+
     @Test
+    public void testImports() throws Exception {
+        testImportStartupEvent();
+        clear();
+        testDockedEvent();
+        clear();
+        testFSDJumpEvent();
+    }
+
+
     public void testImportStartupEvent() throws Exception {
         LOG.info("Testing import startup events");
         EventImporter importer = new EventImporter(galaxy);
@@ -75,21 +95,34 @@ public class EventImporterTest extends JPATest {
         importer.importEvent(events);
         Optional<Commander> cmdr = importer.getImportedCmdr();
         assertTrue(cmdr.isPresent());
-        assertCmdr(cmdr.get());
+        assertCmdr(cmdr.get(), false);
     }
 
-    public void assertCmdr(Commander cmdr){
+    public void assertCmdr(Commander cmdr, boolean docked){
         assertEquals("MoHax", cmdr.getName());
         assertEquals(348755553, cmdr.getCredits(), 0.0);
-        assertEquals(true, cmdr.isLanded());
-        assertEquals(-8.669971, cmdr.getLatitude(), 0.0);
-        assertEquals(6.145895, cmdr.getLongitude(), 0.0);
         assertEquals(false, cmdr.isDead());
-        Body body = cmdr.getBody();
-        assertEquals("Pethes 2 b", body.getName());
-        assertEquals(BODY_TYPE.PLANET, body.getType());
-        assertStarSystem(cmdr.getStarSystem());
-        assertNull(cmdr.getStation());
+
+        if (docked){
+            assertEquals(false, cmdr.isLanded());
+            assertNull(cmdr.getLatitude());
+            assertNull(cmdr.getLongitude());
+            Body body = cmdr.getBody();
+            assertEquals("Willis Port", body.getName());
+            assertEquals(BODY_TYPE.STATION, body.getType());
+            assertStarSystem2(cmdr.getStarSystem());
+            assertNull(cmdr.getStation());
+        } else {
+            assertEquals(348755553, cmdr.getCredits(), 0.0);
+            assertEquals(true, cmdr.isLanded());
+            assertEquals(-8.669971, cmdr.getLatitude(), 0.0);
+            assertEquals(6.145895, cmdr.getLongitude(), 0.0);
+            Body body = cmdr.getBody();
+            assertEquals("Pethes 2 b", body.getName());
+            assertEquals(BODY_TYPE.PLANET, body.getType());
+            assertStarSystem(cmdr.getStarSystem());
+            assertNull(cmdr.getStation());
+        }
         Ship ship = cmdr.getShip();
         assertShip(ship);
         Collection<Ship> ships = cmdr.getShips();
@@ -210,15 +243,102 @@ public class EventImporterTest extends JPATest {
         assertEquals("Pethes Purple Fortune Corp.", faction.getName());
         assertEquals(FACTION.FEDERATION, faction.getFaction());
         assertEquals(GOVERNMENT.CORPORATE, faction.getGovernment());
+    }
 
+    private void assertStarSystem2(StarSystem starSystem){
+        assertEquals("Wolf 124", starSystem.getName());
+        assertEquals(-7.250, starSystem.getX(), 0);
+        assertEquals(-27.156, starSystem.getY(), 0);
+        assertEquals(-19.094, starSystem.getZ(), 0);
+        assertEquals(0, starSystem.getPopulation());
+        assertEquals(SECURITY_LEVEL.HIGH, starSystem.getSecurity());
+        assertEquals(POWER.HUDSON, starSystem.getPower());
+        assertEquals(POWER_STATE.EXPLOITED, starSystem.getPowerState());
+        assertEquals(0, starSystem.getIncome());
 
+        MinorFaction faction = starSystem.getControllingFaction();
+        assertEquals("Green Party of Wolf 124", faction.getName());
+        assertEquals(FACTION.FEDERATION, faction.getFaction());
+        assertEquals(GOVERNMENT.DEMOCRACY, faction.getGovernment());
 
+        Collection<Body> bodies = starSystem.getBodies();
+        assertEquals(1, bodies.size());
+
+        Collection<MinorFactionState> factions = starSystem.getFactions();
+        assertEquals(7, factions.size());
+        MinorFactionState state = factions.stream().filter(f -> "Conservatives of Wolf 124".equals(f.getFaction().getName())).findAny().get();
+        assertEquals(STATE_TYPE.BOOM, state.getState());
+        assertEquals(0.093, state.getInfluence(), 0.001);
+        List<STATE_TYPE> states = state.getStates(STATE_STATUS.PENDING).collect(Collectors.toList());
+        assertEquals(0, states.size());
+        states = state.getStates(STATE_STATUS.RECOVERY).collect(Collectors.toList());
+        assertEquals(0, states.size());
+        states = state.getStates(STATE_STATUS.ACTIVE).collect(Collectors.toList());
+        assertEquals(1, states.size());
+        assertThat(states, hasItems(STATE_TYPE.BOOM));
+        faction = state.getFaction();
+        assertEquals("Conservatives of Wolf 124", faction.getName());
+        assertEquals(FACTION.INDEPENDENT, faction.getFaction());
+        assertEquals(GOVERNMENT.DICTATORSHIP, faction.getGovernment());
+
+        state = factions.stream().filter(f -> "League of Wolf 124 Liberty Party".equals(f.getFaction().getName())).findAny().get();
+        assertEquals(STATE_TYPE.WAR, state.getState());
+        assertEquals(0.030, state.getInfluence(), 0.001);
+        states = state.getStates(STATE_STATUS.PENDING).collect(Collectors.toList());
+        assertEquals(1, states.size());
+        assertThat(states, hasItems(STATE_TYPE.BOOM));
+        states = state.getStates(STATE_STATUS.RECOVERY).collect(Collectors.toList());
+        assertEquals(0, states.size());
+        states = state.getStates(STATE_STATUS.ACTIVE).collect(Collectors.toList());
+        assertEquals(1, states.size());
+        assertThat(states, hasItems(STATE_TYPE.WAR));
+        faction = state.getFaction();
+        assertEquals("League of Wolf 124 Liberty Party", faction.getName());
+        assertEquals(FACTION.INDEPENDENT, faction.getFaction());
+        assertEquals(GOVERNMENT.DICTATORSHIP, faction.getGovernment());
+    }
+
+    private void assertStation(Station station){
+        assertEquals("Willis Port", station.getName());
+        assertEquals(STATION_TYPE.OCELLUS_STARPORT, station.getType());
+        assertEquals("Wolf 124", station.getStarSystem().getName());
+        MinorFaction faction = station.getFaction();
+        assertEquals("Green Party of Wolf 124", faction.getName());
+        assertEquals(FACTION.FEDERATION, faction.getFaction());
+        assertEquals(GOVERNMENT.DEMOCRACY, faction.getGovernment());
+        assertEquals(ECONOMIC_TYPE.INDUSTRIAL, station.getEconomic());
+        assertEquals(137.572388, station.getDistance(), 0);
+    }
+
+    public void testImportEvent() throws Exception {
 
     }
 
-    @Test
-    public void testImportEvent() throws Exception {
+    public void testDockedEvent() throws Exception {
+        LOG.info("Testing import docked event");
+        EventImporter importer = new EventImporter(galaxy);
+        StartupEvents events = createStartupEvents();
+        LoadGameEvent loadGameEvent = new LoadGameEvent(parse(LOADGAME_DOCKED_EVENT));
+        events.init(loadGameEvent);
+        LocationEvent locationEvent = new LocationEvent(parse(LOCATION_DOCKED_EVENT));
+        events.init(locationEvent);
+        importer.importEvent(events);
+        Optional<Commander> cmdr = importer.getImportedCmdr();
+        assertCmdr(cmdr.get(), true);
+        DockedEvent dockedEvent = new DockedEvent(parse(DOCKED_EVENT));
+        importer.importEvent(dockedEvent);
+        assertStation(cmdr.get().getStation());
+    }
 
+    public void testFSDJumpEvent() throws Exception {
+        LOG.info("Testing import fsd jump event");
+        EventImporter importer = new EventImporter(galaxy);
+        StartupEvents events = createStartupEvents();
+        importer.importEvent(events);
+        FSDJumpEvent fsdJumpEvent = new FSDJumpEvent(parse(JUMP_EVENT));
+        importer.importEvent(fsdJumpEvent);
+        Optional<Commander> cmdr = importer.getImportedCmdr();
+        assertStarSystem2(cmdr.get().getStarSystem());
     }
 
     @After

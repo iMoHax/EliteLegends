@@ -158,8 +158,9 @@ public class GalaxyStore implements GalaxyService, Galaxy {
 
     @Override
     public void clearCmdrs() {
-        Query query = manager.createNamedQuery("Commander.deleteAll");
-        query.executeUpdate();
+        for (Commander commander : getCmdrs()) {
+            manager.remove(commander);
+        }
     }
 
     @Override

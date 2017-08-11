@@ -152,6 +152,10 @@ public class CommanderImpl implements Commander {
     @Override
     public void setLanded(boolean landed) {
         this.landed = landed;
+        if (!landed){
+            latitude = null;
+            longitude = null;
+        }
     }
 
     @Override
