@@ -2,18 +2,17 @@ package ru.elite.utils.edlog;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.elite.entity.Body;
 import ru.elite.entity.Commander;
 import ru.elite.entity.StarSystem;
 import ru.elite.entity.Station;
 import ru.elite.store.GalaxyService;
 import ru.elite.store.imp.AbstractImporter;
+import ru.elite.store.imp.entities.BodyData;
 import ru.elite.store.imp.entities.CommanderData;
 import ru.elite.store.imp.entities.StarSystemData;
 import ru.elite.store.imp.entities.StationData;
-import ru.elite.utils.edlog.entities.events.DockedEvent;
-import ru.elite.utils.edlog.entities.events.FSDJumpEvent;
-import ru.elite.utils.edlog.entities.events.JournalEvent;
-import ru.elite.utils.edlog.entities.events.StartupEvents;
+import ru.elite.utils.edlog.entities.events.*;
 
 import javax.persistence.EntityTransaction;
 import java.io.IOException;
@@ -66,11 +65,23 @@ public class EventImporter extends AbstractImporter {
     }
 
     private void _importEvent(JournalEvent event){
-        if (event instanceof DockedEvent){
-            _importEvent((DockedEvent)event);
-        }
         if (event instanceof FSDJumpEvent){
             _importEvent((FSDJumpEvent)event);
+        } else
+        if (event instanceof DockedEvent){
+            _importEvent((DockedEvent)event);
+        } else
+        if (event instanceof TouchdownEvent){
+            _importEvent((TouchdownEvent)event);
+        } else
+        if (event instanceof SupercruiseExitEvent){
+            _importEvent((SupercruiseExitEvent)event);
+        } else
+        if (event instanceof UndockedEvent){
+            _importEvent((UndockedEvent)event);
+        } else
+        if (event instanceof LiftoffEvent){
+            _importEvent((LiftoffEvent)event);
         }
     }
 
@@ -104,6 +115,44 @@ public class EventImporter extends AbstractImporter {
         }
     }
 
+    private void _importEvent(TouchdownEvent event){
+        cmdr.ifPresent(c -> {
+            if (event.isPlayerControlled()){
+                c.setLongitude(event.getLongitude());
+                c.setLatitude(event.getLatitude());
+                c.setLanded(true);
+            }
+        });
+    }
+
+    private void _importEvent(SupercruiseExitEvent event){
+        Optional<StarSystem> system = galaxyService.findStarSystemByName(event.getStarSystem());
+        if (!system.isPresent()){
+            LOG.warn("StarSystem {} not found", event.getStarSystem());
+        } else {
+            BodyData data = event.getBody().asImportData();
+            Body body = impBody(galaxyService, system.get(), data);
+            if (body == null){
+                LOG.warn("Body {} not found", data.getName());
+            } else {
+                cmdr.ifPresent(c -> c.setBody(body));
+            }
+        }
+    }
+
+    private void _importEvent(UndockedEvent event){
+        cmdr.ifPresent(c -> c.setStation(null));
+    }
+
+    private void _importEvent(LiftoffEvent event){
+        cmdr.ifPresent(c -> {
+            if (event.isPlayerControlled()){
+                c.setLongitude(event.getLongitude());
+                c.setLatitude(event.getLatitude());
+                c.setLanded(false);
+            }
+        });
+    }
 
     private void transactional(Runnable action){
         EntityTransaction transaction = galaxyService.startTransaction();

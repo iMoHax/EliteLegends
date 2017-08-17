@@ -3,6 +3,7 @@ package ru.elite.utils.edlog.entities.events;
 import org.jetbrains.annotations.Nullable;
 import ru.elite.core.BODY_TYPE;
 import ru.elite.store.imp.entities.*;
+import ru.elite.utils.edlog.entities.nodes.BodyNode;
 import ru.elite.utils.edlog.entities.nodes.StationNode;
 
 import java.util.ArrayList;
@@ -54,7 +55,8 @@ public class StartupEvents {
 
     public CommanderData asImportData(){
         final Collection<InventoryEntryData> inventory = asInventory();
-        final BodyData body = asBody();
+        BodyNode bodyNode = locationEvent.getBody();
+        final BodyData body = bodyNode != null ? bodyNode.asImportData() : null;
         final ShipData ship = asShip();
         final StarSystemData starSystem = locationEvent.getStarSystem().asImportData();
         StationNode stationNode = locationEvent.getStation();
@@ -136,20 +138,6 @@ public class StartupEvents {
         materialsEvent.getManufactured().forEach(i -> items.add(i.asImportData()));
         materialsEvent.getDatas().forEach(i -> items.add(i.asImportData()));
         return items;
-    }
-
-    private BodyData asBody(){
-        return new BodyDataBase() {
-            @Override
-            public String getName() {
-                return locationEvent.getBodyName();
-            }
-
-            @Override
-            public BODY_TYPE getType() {
-                return locationEvent.getBodyType();
-            }
-        };
     }
 
     private ShipData asShip(){

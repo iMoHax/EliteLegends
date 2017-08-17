@@ -4,33 +4,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.Nullable;
 import ru.elite.core.BODY_TYPE;
 import ru.elite.utils.edlog.EDConverter;
+import ru.elite.utils.edlog.entities.nodes.BodyNode;
 import ru.elite.utils.edlog.entities.nodes.StarSystemNode;
 import ru.elite.utils.edlog.entities.nodes.StationNode;
 
 public class LocationEvent extends JournalEventImpl {
     private final StarSystemNode starSystem;
     private final StationNode station;
+    private final BodyNode body;
 
     public LocationEvent(JsonNode node) {
         super(node);
         starSystem = new StarSystemNode(node);
         station = new StationNode(node);
+        body = new BodyNode(node);
     }
 
     public StarSystemNode getStarSystem(){
         return starSystem;
-    }
-
-    @Nullable
-    public String getBodyName(){
-        JsonNode n = node.get("Body");
-        return n != null ? n.asText() : null;
-    }
-
-    @Nullable
-    public BODY_TYPE getBodyType(){
-        JsonNode n = node.get("BodyType");
-        return n != null ? EDConverter.asBodyType(n.asText()) : null;
     }
 
     public boolean isDocked(){
@@ -42,6 +33,11 @@ public class LocationEvent extends JournalEventImpl {
     public StationNode getStation(){
         JsonNode n = node.get("StationName");
         return n != null ? station : null;
+    }
+
+    @Nullable
+    public BodyNode getBody(){
+        return body.getBodyName() != null ? body : null;
     }
 
     @Nullable
