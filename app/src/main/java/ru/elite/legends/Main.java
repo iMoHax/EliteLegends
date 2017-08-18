@@ -12,6 +12,7 @@ import ru.elite.legends.controllers.EventsManager;
 import ru.elite.legends.controllers.QuestsManager;
 import ru.elite.legends.locale.Localization;
 import ru.elite.legends.view.ViewManager;
+import ru.elite.store.jpa.GalaxyStore;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class Main extends Application {
     public static ViewManager viewManager;
     public static EventsManager eventsManager;
     public static QuestsManager questsManager;
+    public static GalaxyStore galaxy;
     private static EDLogWatcher logWatcher;
 
 
@@ -96,7 +98,8 @@ public class Main extends Application {
         eventsManager = new EventsManager();
         questsManager = QuestsLoader.load();
         eventsManager.register(questsManager);
-        logWatcher = new EDLogWatcher(eventsManager);
+        EDLogHandler handler = new EDLogHandler(galaxy, eventsManager);
+        logWatcher = new EDLogWatcher(handler);
         logWatcher.run();
     }
 

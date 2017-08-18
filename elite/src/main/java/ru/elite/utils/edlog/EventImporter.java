@@ -59,30 +59,34 @@ public class EventImporter extends AbstractImporter {
         transactional(() -> _importEvent(events));
     }
 
-    public void importEvent(JournalEvent event){
-        LOG.debug("Import event: {}", event);
+    public void importEvent(FSDJumpEvent event){
+        LOG.debug("Import fsd jump event: {}", event);
         transactional(() -> _importEvent(event));
     }
 
-    private void _importEvent(JournalEvent event){
-        if (event instanceof FSDJumpEvent){
-            _importEvent((FSDJumpEvent)event);
-        } else
-        if (event instanceof DockedEvent){
-            _importEvent((DockedEvent)event);
-        } else
-        if (event instanceof TouchdownEvent){
-            _importEvent((TouchdownEvent)event);
-        } else
-        if (event instanceof SupercruiseExitEvent){
-            _importEvent((SupercruiseExitEvent)event);
-        } else
-        if (event instanceof UndockedEvent){
-            _importEvent((UndockedEvent)event);
-        } else
-        if (event instanceof LiftoffEvent){
-            _importEvent((LiftoffEvent)event);
-        }
+    public void importEvent(DockedEvent event){
+        LOG.debug("Import docked event: {}", event);
+        transactional(() -> _importEvent(event));
+    }
+
+    public void importEvent(TouchdownEvent event){
+        LOG.debug("Import touchdown event: {}", event);
+        transactional(() -> _importEvent(event));
+    }
+
+    public void importEvent(SupercruiseExitEvent event){
+        LOG.debug("Import super cruise exit event: {}", event);
+        transactional(() -> _importEvent(event));
+    }
+
+    public void importEvent(UndockedEvent event){
+        LOG.debug("Import undocked event: {}", event);
+        transactional(() -> _importEvent(event));
+    }
+
+    public void importEvent(LiftoffEvent event){
+        LOG.debug("Import liftoff event: {}", event);
+        transactional(() -> _importEvent(event));
     }
 
     private void _importEvent(StartupEvents event){

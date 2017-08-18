@@ -3,10 +3,7 @@ package ru.elite.utils.edlog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.file.Path;
 
 public class LogReader implements LogHandler {
@@ -107,5 +104,17 @@ public class LogReader implements LogHandler {
     @Override
     public void close() {
         closeReader();
+    }
+
+    public void read(BufferedReader reader){
+        LOG.trace("Read from stream");
+        String line;
+        try {
+            while ((line = reader.readLine()) != null){
+                outLine(line);
+            }
+        } catch (IOException e) {
+            LOG.error("Error on read from stream", e);
+        }
     }
 }

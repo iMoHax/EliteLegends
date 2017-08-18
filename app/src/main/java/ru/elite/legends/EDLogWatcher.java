@@ -2,12 +2,7 @@ package ru.elite.legends;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.elite.legends.controllers.EventsManager;
-import ru.elite.legends.entities.EVENT_TYPE;
-import ru.elite.utils.edlog.EDJournalReader;
 import ru.elite.utils.edlog.LogWatcher;
-import ru.elite.utils.edlog.entities.events.DockedEvent;
-import ru.elite.utils.edlog.entities.events.FSDJumpEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,13 +11,11 @@ public class EDLogWatcher {
     private final static Logger LOG = LoggerFactory.getLogger(EDLogWatcher.class);
     private final static String LOG_DIR = System.getProperty("user.home") + File.separator + "Saved Games" + File.separator + "Frontier Developments" + File.separator + "Elite Dangerous";
 
-    private final EventsManager manager;
     private final LogWatcher watcher;
 
 
-    public EDLogWatcher(EventsManager manager) {
-        this.manager = manager;
-        this.watcher = new LogWatcher(new EDLogHandler());
+    public EDLogWatcher(EDLogHandler handler) {
+        this.watcher = new LogWatcher(handler);
     }
 
     public boolean isActive(){
@@ -59,24 +52,6 @@ public class EDLogWatcher {
     public void shutdown(){
         LOG.debug("Shutdown ED log watcher");
         stop();
-    }
-
-    private class EDLogHandler extends EDJournalReader {
-
-        private EDLogHandler() {
-        }
-
-        @Override
-        protected void docked(DockedEvent dockedEvent) {
-            super.docked(dockedEvent);
-            manager.fireEvent(EVENT_TYPE.DOCKED);
-        }
-
-        @Override
-        protected void jump(FSDJumpEvent jumpEvent) {
-            super.jump(jumpEvent);
-            manager.fireEvent(EVENT_TYPE.JUMP);
-        }
     }
 
 
