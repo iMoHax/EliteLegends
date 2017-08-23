@@ -1,40 +1,14 @@
 package ru.elite.legends.entities;
 
-public abstract class Action {
-    private final String id;
-    private final String description;
-    private boolean active;
+public interface Action {
+    void action();
 
-    public Action(String id, String description) {
-        this.id = id;
-        this.description = description;
-        this.active = true;
-    }
+    String getId();
 
-    public abstract void complete();
+    String getDescription();
 
-    public String getId() {
-        return id;
-    }
+    boolean isActive();
+    void setActive(boolean active);
 
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    @Override
-    public String toString() {
-        return "Action{" +
-                "id='" + id + '\'' +
-                ", description='" + description + '\'' +
-                ", active=" + active +
-                '}';
-    }
+    boolean isAuto();
 }

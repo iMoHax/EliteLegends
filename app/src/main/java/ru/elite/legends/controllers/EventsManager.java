@@ -68,7 +68,7 @@ public class EventsManager {
         LOG.trace("Fire event {}", eventType);
         EventHandler[] handlers = get(eventType);
         for (EventHandler handler : handlers) {
-            handler.handle();
+            handler.action();
         }
     }
 

@@ -31,7 +31,7 @@ public class ActionModel {
     }
 
     public void execute(){
-        action.complete();
+        action.action();
     }
 
     @Override
