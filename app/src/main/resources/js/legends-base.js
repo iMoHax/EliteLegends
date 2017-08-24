@@ -51,9 +51,11 @@ function asStage(obj){
 }
 
 function asQuest(obj){
+    var startStage = obj.stages[0];
+    startStage.status = QUEST_STATUS.ACTIVE;
     return new Quest({
         status: obj.active ? QUEST_STATUS.ACTIVE : QUEST_STATUS.NONE,
-        stage: obj.stages[0],
+        stage: startStage,
         getId: function(){return obj.id},
         getCaption: function(){return obj.caption},
         getDescription: function(){return obj.description},

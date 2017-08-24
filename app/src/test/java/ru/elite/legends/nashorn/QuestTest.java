@@ -21,6 +21,7 @@ public class QuestTest extends NashornTest {
         assertEquals("Вы попали в закрытую комнату, вам нужно выбратся из нее", quest.getDescription());
         assertEquals(QUEST_STATUS.NONE, quest.getStatus());
         assertEquals("s1", quest.getStage().getId());
+        assertEquals(QUEST_STATUS.ACTIVE, quest.getStage().getStatus());
         Collection<Stage> stages = quest.getStages();
         assertEquals(6, stages.size());
     }
