@@ -22,7 +22,8 @@ public class StageTest extends NashornTest {
             "};"+
             "var stage3 = {\n" +
             "    id: \"s3\",\n" +
-            "    text: \"<p>Вы находитесь в центре комнаты, перед вами три двери в какую пойдете?</p>\"\n" +
+            "    text: \"<p>Вы находитесь в центре комнаты, перед вами три двери в какую пойдете?</p>\",\n" +
+            "    active: true"+
             "};"+
             "var toUp = {\n" +
             "    id: \"toUp\",\n" +
@@ -107,6 +108,15 @@ public class StageTest extends NashornTest {
         assertEquals(0, actions.size());
         Collection<EventHandler> events = stage.getEvents();
         assertEquals(2, events.size());
+    }
+
+    @Test
+    public void testActiveStatus() throws Exception {
+        Bindings bindings = createGlobalBindings();
+        engine.eval(INIT_SCRIPT, bindings);
+        Stage stage = (Stage) bindings.get("result3");
+        assertNotNull(stage);
+        assertEquals(QUEST_STATUS.ACTIVE, stage.getStatus());
     }
 
     @Test

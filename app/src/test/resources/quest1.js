@@ -32,6 +32,12 @@ down = {
     text: "<p>Спускаясь по лестнице вы не заметили, что одна из ступенек прогнила, в результате" +
           " вы провалились в подвал и сломали себе шею</p>"
 };
+var quest2 = {
+        id: "q2",
+        caption: "Тайная комната",
+        description: "Вы попали в закрытую комнату, вам нужно выбратся из нее",
+        active: true
+    };
 
 var toDoor1 = {
     id: "toDoor1",
@@ -99,6 +105,8 @@ door3.actions = asActions([fail]);
 up.actions = asActions([complete]);
 down.actions = asActions([fail]);
 quest.stages = asStages([start, door1, door2, door3, up, down]);
+quest2.stages = asStages([start, door1]);
 
 var result = asQuest(quest),
+    result2 = asQuest(quest2),
     executed = false;

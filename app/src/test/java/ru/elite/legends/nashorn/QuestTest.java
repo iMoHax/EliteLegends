@@ -25,6 +25,14 @@ public class QuestTest extends NashornTest {
         assertEquals(6, stages.size());
     }
 
+    @Test
+    public void testActiveStatus() throws Exception {
+        Bindings bindings = createGlobalBindings();
+        engine.eval(new InputStreamReader(ActionTest.class.getResourceAsStream("/quest1.js")), bindings);
+        Quest quest = (Quest) bindings.get("result2");
+        assertNotNull(quest);
+        assertEquals(QUEST_STATUS.ACTIVE, quest.getStatus());
+    }
 
     @Test
     public void testChangeStatus() throws Exception {

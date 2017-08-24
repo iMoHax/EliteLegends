@@ -40,7 +40,7 @@ function asEvent(obj){
 
 function asStage(obj){
     return new Stage({
-        status: QUEST_STATUS.NONE,
+        status: obj.active ? QUEST_STATUS.ACTIVE : QUEST_STATUS.NONE,
         getId: function(){return obj.id},
         getText: function(){return obj.text},
         getStatus: function(){return this.status},
@@ -52,7 +52,7 @@ function asStage(obj){
 
 function asQuest(obj){
     return new Quest({
-        status: QUEST_STATUS.NONE,
+        status: obj.active ? QUEST_STATUS.ACTIVE : QUEST_STATUS.NONE,
         stage: obj.stages[0],
         getId: function(){return obj.id},
         getCaption: function(){return obj.caption},
