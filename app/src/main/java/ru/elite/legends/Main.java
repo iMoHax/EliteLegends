@@ -8,12 +8,15 @@ import javafx.stage.Stage;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.elite.entity.Commander;
 import ru.elite.legends.controllers.EventsManager;
 import ru.elite.legends.controllers.QuestsManager;
 import ru.elite.legends.locale.Localization;
+import ru.elite.legends.nashorn.NashornController;
 import ru.elite.legends.view.ViewManager;
 import ru.elite.store.jpa.GalaxyStore;
 
+import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,7 +29,9 @@ public class Main extends Application {
     public static ViewManager viewManager;
     public static EventsManager eventsManager;
     public static QuestsManager questsManager;
+    public static NashornController scriptController;
     public static GalaxyStore galaxy;
+    public static Commander cmdr;
     private static EDLogWatcher logWatcher;
 
 
@@ -96,14 +101,29 @@ public class Main extends Application {
 
     private void initServices() {
         eventsManager = new EventsManager();
-        questsManager = QuestsLoader.load();
+        questsManager = new QuestsManager();
         eventsManager.register(questsManager);
+        initScripts();
+        initLogWatcher();
+    }
+
+    private void initScripts(){
+        try {
+            scriptController = new NashornController();
+        } catch (ScriptException e) {
+            LOG.error("Error on init scripts: {}", e);
+            throw new RuntimeException(e);
+        }
+        scriptController.init(questsManager, cmdr);
+        QuestsLoader loader = new QuestsLoader(scriptController);
+        loader.load("quests");
+    }
+
+    private void initLogWatcher(){
         EDLogHandler handler = new EDLogHandler(galaxy, eventsManager);
         logWatcher = new EDLogWatcher(handler);
         logWatcher.run();
     }
-
-
 
     public static void copyToClipboard(String string){
         final Clipboard clipboard = Clipboard.getSystemClipboard();
