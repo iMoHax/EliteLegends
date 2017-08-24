@@ -13,7 +13,7 @@ public class QuestTest extends NashornTest {
     @Test
     public void testInit() throws Exception {
         Bindings bindings = createGlobalBindings();
-        engine.eval(new InputStreamReader(ActionTest.class.getResourceAsStream("/quest1.js")), bindings);
+        engine.eval(new InputStreamReader(ActionTest.class.getResourceAsStream("/quest1.js"), "utf-8"), bindings);
         Quest quest = (Quest) bindings.get("result");
         assertNotNull(quest);
         assertEquals("q1", quest.getId());
