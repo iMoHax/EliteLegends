@@ -1,8 +1,6 @@
 package ru.elite.legends.entities;
 
 public interface Action {
-    void action();
-
     String getId();
 
     String getDescription();
@@ -11,4 +9,7 @@ public interface Action {
     void setActive(boolean active);
 
     boolean isAuto();
+
+    void action();
+
 }

@@ -40,7 +40,7 @@ public class QuestsManager {
 
 
     private Optional<Stage> getStage(Quest quest, String stageId){
-        Optional<Stage> stage = quest.getStage(stageId);
+        Optional<Stage> stage = quest.getStageById(stageId);
         if (!stage.isPresent()){
             LOG.warn("Stage with ID = {} not found, quest = {}", stageId, quest);
         }

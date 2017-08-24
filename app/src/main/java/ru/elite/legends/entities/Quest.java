@@ -18,7 +18,7 @@ public interface Quest {
     QUEST_STATUS getStatus();
     void setStatus(QUEST_STATUS status);
 
-    default Optional<Stage> getStage(String id){
+    default Optional<Stage> getStageById(String id){
         return getStages().stream().filter(s -> s.getId().equals(id)).findAny();
     }
 
