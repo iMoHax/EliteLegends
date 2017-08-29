@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+
+    <persistence-unit name="ru.elite.legends.JPAUnit" transaction-type="RESOURCE_LOCAL">
+        <description>Elite Legends JPA Persistence Unit</description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>ru.elite.store.jpa.entity.BodyImpl</class>
+        <class>ru.elite.store.jpa.entity.CommanderImpl</class>
+        <class>ru.elite.store.jpa.entity.FactionRules</class>
+        <class>ru.elite.store.jpa.entity.FactionStates</class>
+        <class>ru.elite.store.jpa.entity.GovernmentRules</class>
+        <class>ru.elite.store.jpa.entity.GroupImpl</class>
+        <class>ru.elite.store.jpa.entity.InventoryEntryImpl</class>
+        <class>ru.elite.store.jpa.entity.ItemImpl</class>
+        <class>ru.elite.store.jpa.entity.MinorFactionImpl</class>
+        <class>ru.elite.store.jpa.entity.MinorFactionStateImpl</class>
+        <class>ru.elite.store.jpa.entity.ModuleImpl</class>
+        <class>ru.elite.store.jpa.entity.OfferImpl</class>
+        <class>ru.elite.store.jpa.entity.Rank</class>
+        <class>ru.elite.store.jpa.entity.ShipImpl</class>
+        <class>ru.elite.store.jpa.entity.SlotImpl</class>
+        <class>ru.elite.store.jpa.entity.StarSystemImpl</class>
+        <class>ru.elite.store.jpa.entity.StationImpl</class>
+
+        <properties>
+            <!-- Configuring JDBC properties -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:./data/legends"/>
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+
+            <!-- Hibernate properties -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.format_sql" value="false"/>
+            <property name="hibernate.show_sql" value="false"/>
+
+        </properties>
+    </persistence-unit>
+</persistence>

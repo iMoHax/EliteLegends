@@ -16,6 +16,9 @@ import ru.elite.legends.nashorn.NashornController;
 import ru.elite.legends.view.ViewManager;
 import ru.elite.store.jpa.GalaxyStore;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +28,7 @@ import java.util.Locale;
 
 public class Main extends Application {
     private final static Logger LOG = LoggerFactory.getLogger(Main.class);
+    private static EntityManagerFactory EMF;
     private static Stage primaryStage;
     public static ViewManager viewManager;
     public static EventsManager eventsManager;
@@ -38,6 +42,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Main.primaryStage = primaryStage;
+        initDatabase();
         initServices();
         loadMainScene();
         loadResources();
@@ -49,6 +54,8 @@ public class Main extends Application {
     public void stop() throws Exception {
         super.stop();
         logWatcher.shutdown();
+        galaxy.close();
+        EMF.close();
     }
 
     public static void main(String[] args) {
@@ -102,9 +109,9 @@ public class Main extends Application {
     private void initServices() {
         eventsManager = new EventsManager();
         questsManager = new QuestsManager();
-        eventsManager.register(questsManager);
         initScripts();
         initLogWatcher();
+        eventsManager.register(questsManager);
     }
 
     private void initScripts(){
@@ -123,6 +130,17 @@ public class Main extends Application {
         EDLogHandler handler = new EDLogHandler(galaxy, eventsManager);
         logWatcher = new EDLogWatcher(handler);
         logWatcher.run();
+    }
+
+    private void initDatabase(){
+        EMF = Persistence.createEntityManagerFactory("ru.elite.legends.JPAUnit");
+        EntityManager manager = EMF.createEntityManager();
+        galaxy = new GalaxyStore(manager);
+    }
+
+    public static void updateCmdr(Commander cmdr){
+        Main.cmdr = cmdr;
+        scriptController.setCmdr(cmdr);
     }
 
     public static void copyToClipboard(String string){
