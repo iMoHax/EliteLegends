@@ -1,5 +1,6 @@
 package ru.elite.legends;
 
+import ru.elite.entity.Commander;
 import ru.elite.legends.controllers.EventsManager;
 import ru.elite.legends.entities.EVENT_TYPE;
 import ru.elite.store.GalaxyService;
@@ -7,6 +8,8 @@ import ru.elite.utils.edlog.EDJournalReader;
 import ru.elite.utils.edlog.EventImporter;
 import ru.elite.utils.edlog.entities.JournalImportHandler;
 import ru.elite.utils.edlog.entities.events.*;
+
+import java.util.Optional;
 
 public class EDLogHandler extends EDJournalReader {
     private final EventsManager manager;
@@ -16,6 +19,7 @@ public class EDLogHandler extends EDJournalReader {
         super();
         importer = new EventImporter(galaxy);
         this.manager = manager;
+        setSkipOld(false);
         setHandler(new EventHandler(importer));
     }
 
@@ -90,6 +94,8 @@ public class EDLogHandler extends EDJournalReader {
         @Override
         public void location(LocationEvent event) {
             super.location(event);
+            Optional<Commander> cmdr = importer.getImportedCmdr();
+            cmdr.ifPresent(Main::updateCmdr);
         }
     }
 }

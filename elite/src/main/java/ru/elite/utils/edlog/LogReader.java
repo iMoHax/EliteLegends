@@ -12,9 +12,15 @@ public class LogReader implements LogHandler {
     private final String pattern;
     private RandomAccessFile reader;
     private File file;
+    private boolean skipOld;
 
     public LogReader(String pattern) {
         this.pattern = pattern;
+        skipOld = true;
+    }
+
+    public void setSkipOld(boolean skipOld) {
+        this.skipOld = skipOld;
     }
 
     private void changeFile(File file){
@@ -59,7 +65,10 @@ public class LogReader implements LogHandler {
     public void createFile(Path file) {
         if (file.toString().matches(pattern)){
             changeFile(file.toFile());
-            seekToEnd();
+            if (skipOld){
+                seekToEnd();
+            }
+            readFile();
         } else {
             LOG.trace("{} Is not log file, skip", file);
         }
@@ -71,7 +80,9 @@ public class LogReader implements LogHandler {
             File f = file.toFile();
             if (this.file == null){
                 changeFile(f);
-                seekToEnd();
+                if (skipOld){
+                    seekToEnd();
+                }
             } else {
                 if (this.file.equals(f)){
                     readFile();
