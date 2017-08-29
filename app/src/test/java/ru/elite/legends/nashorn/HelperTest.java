@@ -22,6 +22,7 @@ public class HelperTest extends NashornTest {
         final String IS_SYSTEM_SCRIPT = "var result = helper.isSystem('Sol');";
         Bindings bindings = createGlobalBindings();
         engine.put("cmdr", cmdr);
+        engine.eval("context.cmdr = cmdr");
 
         engine.eval(IS_SYSTEM_SCRIPT, bindings);
         boolean result = (boolean) bindings.get("result");
@@ -50,6 +51,7 @@ public class HelperTest extends NashornTest {
         final String IS_DOCKED_SCRIPT = "var result = helper.isDocked('Sol','Gagarin Terminal');";
         Bindings bindings = createGlobalBindings();
         engine.put("cmdr", cmdr);
+        engine.eval("context.cmdr = cmdr");
 
         engine.eval(IS_DOCKED_SCRIPT, bindings);
         boolean result = (boolean) bindings.get("result");
@@ -94,6 +96,7 @@ public class HelperTest extends NashornTest {
         final String IS_LANDING_SCRIPT = "var result = helper.isLanded('Sol','Earth',51.8828812,128.3322449,0.1);";
         Bindings bindings = createGlobalBindings();
         engine.put("cmdr", cmdr);
+        engine.eval("context.cmdr = cmdr");
 
         engine.eval(IS_LANDING_SCRIPT, bindings);
         boolean result = (boolean) bindings.get("result");

@@ -19,7 +19,7 @@ function asAction(obj){
     return new Action({
         active: obj.active != false,
         getId: function(){return obj.id},
-        getDescription: function(){return obj.description},
+        getDescription: function(){return Mustache.render(obj.description, context)},
         isActive: function(){return this.active},
         setActive: function(value){this.active = value},
         isAuto: function(){return obj.auto},
@@ -42,7 +42,7 @@ function asStage(obj){
     return new Stage({
         status: obj.active ? QUEST_STATUS.ACTIVE : QUEST_STATUS.NONE,
         getId: function(){return obj.id},
-        getText: function(){return obj.text},
+        getText: function(){return Mustache.render(obj.text, context)},
         getStatus: function(){return this.status},
         setStatus: function(value){this.status = value},
         getActions: function(){return asCollection(obj.actions);},
@@ -57,8 +57,8 @@ function asQuest(obj){
         status: obj.active ? QUEST_STATUS.ACTIVE : QUEST_STATUS.NONE,
         stage: startStage,
         getId: function(){return obj.id},
-        getCaption: function(){return obj.caption},
-        getDescription: function(){return obj.description},
+        getCaption: function(){return Mustache.render(obj.caption, context)},
+        getDescription: function(){return Mustache.render(obj.description, context)},
         getStage: function(){return this.stage},
         setStage: function(value){this.stage = value},
         getStatus: function(){return this.status},
@@ -79,23 +79,26 @@ function asStages(objs){
     return objs.map(asStage);
 }
 
-
+/**************************/
+/*** Mustache context  ****/
+/**************************/
+var context = {};
 
 /****************************/
 /******* HELPER *************/
 /****************************/
 var helper = {};
 helper.isSystem = function(starSystemName){
-    return cmdr.starSystem != null && cmdr.starSystem.name == starSystemName;
+    return context.cmdr.starSystem != null && context.cmdr.starSystem.name == starSystemName;
 };
 helper.isDocked = function(starSystemName, stationName){
-    return cmdr.station != null && cmdr.station.name == stationName &&
-           cmdr.starSystem != null && cmdr.starSystem.name == starSystemName;
+    return context.cmdr.station != null && context.cmdr.station.name == stationName &&
+           context.cmdr.starSystem != null && context.cmdr.starSystem.name == starSystemName;
 };
 helper.isLanded = function(starSystemName, bodyName, latitude, longitude, delta){
-    return cmdr.landed &&
-           cmdr.starSystem != null && cmdr.starSystem.name == starSystemName &&
-           cmdr.body != null && cmdr.body.name == bodyName &&
-           Math.abs(latitude - cmdr.latitude) < delta &&
-           Math.abs(longitude - cmdr.longitude) < delta;
+    return context.cmdr.landed &&
+           context.cmdr.starSystem != null && context.cmdr.starSystem.name == starSystemName &&
+           context.cmdr.body != null && context.cmdr.body.name == bodyName &&
+           Math.abs(latitude - context.cmdr.latitude) < delta &&
+           Math.abs(longitude - context.cmdr.longitude) < delta;
 };

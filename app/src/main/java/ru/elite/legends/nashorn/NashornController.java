@@ -6,10 +6,7 @@ import ru.elite.entity.Commander;
 import ru.elite.legends.controllers.QuestsManager;
 
 import javax.script.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class NashornController {
     private final static Logger LOG = LoggerFactory.getLogger(NashornController.class);
@@ -25,17 +22,23 @@ public class NashornController {
 
     private void injectLibs()  throws ScriptException {
         engine.eval(new InputStreamReader(NashornController.class.getResourceAsStream("/js/legends-base.js")), globalBindings);
+        engine.eval(new InputStreamReader(NashornController.class.getResourceAsStream("/js/mustache.min.js")), globalBindings);
     }
 
     public void init(QuestsManager manager, Commander commander){
         LOG.info("Init bindings");
         globalBindings.put("manager", manager);
-        globalBindings.put("cmdr", commander);
+        setCmdr(commander);
     }
 
     public void setCmdr(Commander cmdr){
         LOG.info("Change cmdr to {}", cmdr);
         globalBindings.put("cmdr", cmdr);
+        try {
+            engine.eval("context.cmdr = cmdr", globalBindings);
+        } catch (ScriptException e) {
+            LOG.error("Error on change context:", e);
+        }
     }
 
     public Bindings createBindings(){
@@ -44,7 +47,11 @@ public class NashornController {
 
     public void load(File file, Bindings bindings) throws FileNotFoundException, ScriptException {
         LOG.info("Load script {}", file);
-        engine.eval(new FileReader(file), bindings);
+        load(new FileReader(file), bindings);
+    }
+
+    public void load(Reader reader, Bindings bindings) throws FileNotFoundException, ScriptException {
+        engine.eval(reader, bindings);
     }
 
     public void eval(String script, Bindings bindings) throws ScriptException {

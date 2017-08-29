@@ -15,6 +15,7 @@ public class NashornTest extends Assert {
     @Before
     public void setUp() throws Exception {
         engine = new ScriptEngineManager().getEngineByName("nashorn");
+        engine.eval(new InputStreamReader(NashornTest.class.getResourceAsStream("/js/mustache.min.js")));
         engine.eval(new InputStreamReader(NashornTest.class.getResourceAsStream("/js/legends-base.js")));
     }
 
