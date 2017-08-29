@@ -84,6 +84,21 @@ function asStages(objs){
 /**************************/
 var context = {};
 
+/**************************/
+/****** Localisation  *****/
+/**************************/
+function getText(texts){
+    var file = Object.keys(texts)[0];
+    switch (context.locale.language){
+        case "en": file = texts.en;
+            break;
+        case "ru": file = texts.ru;
+            break;
+
+    }
+    return file;
+}
+
 /****************************/
 /******* HELPER *************/
 /****************************/

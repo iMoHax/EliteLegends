@@ -7,6 +7,7 @@ import ru.elite.legends.controllers.QuestsManager;
 
 import javax.script.*;
 import java.io.*;
+import java.util.Locale;
 
 public class NashornController {
     private final static Logger LOG = LoggerFactory.getLogger(NashornController.class);
@@ -29,13 +30,24 @@ public class NashornController {
         LOG.info("Init bindings");
         globalBindings.put("manager", manager);
         setCmdr(commander);
+        setLocale(Locale.getDefault());
     }
 
     public void setCmdr(Commander cmdr){
         LOG.info("Change cmdr to {}", cmdr);
-        globalBindings.put("cmdr", cmdr);
+        globalBindings.put("___cmdr", cmdr);
         try {
-            engine.eval("context.cmdr = cmdr", globalBindings);
+            engine.eval("context.cmdr = ___cmdr", globalBindings);
+        } catch (ScriptException e) {
+            LOG.error("Error on change context:", e);
+        }
+    }
+
+    public void setLocale(Locale locale){
+        LOG.info("Change locale to {}", locale);
+        globalBindings.put("___locale", locale);
+        try {
+            engine.eval("context.locale = ___locale", globalBindings);
         } catch (ScriptException e) {
             LOG.error("Error on change context:", e);
         }

@@ -12,6 +12,7 @@ import ru.elite.store.jpa.entity.StarSystemImpl;
 
 import javax.script.Bindings;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 public class NashornControllerTest extends Assert {
     private QuestsManager manager;
@@ -62,6 +63,19 @@ public class NashornControllerTest extends Assert {
         assertEquals("Совершите патрулирование вокруг системы Pethes", quest.getDescription());
         cmdr.setStarSystem(new TestStarSystem("Euryale",1,1,1));
         assertEquals("Совершите патрулирование вокруг системы Euryale", quest.getDescription());
+
+    }
+
+    @Test
+    public void testChangeLocale() throws Exception {
+        Bindings bindings = controller.createBindings();
+        controller.load(new InputStreamReader(NashornControllerTest.class.getResourceAsStream("/lang_test/quest.js")), bindings);
+        Quest quest = (Quest) bindings.get("result");
+        assertEquals("Добро пожаловать Mo", quest.getCaption());
+        controller.setLocale(Locale.ENGLISH);
+        controller.load(new InputStreamReader(NashornControllerTest.class.getResourceAsStream("/lang_test/quest.js")), bindings);
+        quest = (Quest) bindings.get("result");
+        assertEquals("Welcome Mo", quest.getCaption());
 
     }
 
